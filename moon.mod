@@ -1,6 +1,6 @@
 name = "Milky2018/wgpu_mbt"
 
-version = "0.16.1"
+version = "0.16.2"
 
 readme = "README.mbt.md"
 
@@ -15,7 +15,7 @@ description = "This repo contains a MoonBit port of the `wgpu-native` C API (Web
 preferred_target = "native"
 
 import {
-  "Milky2018/windowing@0.1.0",
+  "Milky2018/windowing@0.1.1",
 }
 
 source = "src"
