@@ -358,9 +358,9 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
-          $zipUrl = "https://cli.moonbitlang.com/binaries/latest/moonbit-windows-x86_64.zip"
+          $zipUrl = "https://cli.moonbitlang.com/binaries/nightly/moonbit-windows-x86_64.zip"
           $zipPath = Join-Path $env:RUNNER_TEMP "moonbit.zip"
-          $coreUrl = "https://cli.moonbitlang.com/cores/core-latest.zip"
+          $coreUrl = "https://cli.moonbitlang.com/cores/core-nightly.zip"
           $coreZipPath = Join-Path $env:RUNNER_TEMP "core.zip"
           $moonHome = Join-Path $env:USERPROFILE ".moon"
           $moonLib = Join-Path $moonHome "lib"
@@ -382,9 +382,9 @@ jobs:
           # Bundle core so `moon check` can inject `moonbitlang/core`.
           $env:MOON_HOME = $moonHome
           $env:PATH = (Join-Path $moonHome "bin") + ";" + $env:PATH
-          $coreManifest = Join-Path $moonLib "core\\moon.mod"
-          moon bundle --warn-list -a --all --manifest-path $coreManifest
-          moon bundle --warn-list -a --target wasm-gc --manifest-path $coreManifest --quiet
+          $coreDir = Join-Path $moonLib "core"
+          moon -C $coreDir bundle --warn-list -a --all
+          moon -C $coreDir bundle --warn-list -a --target wasm-gc --quiet
 
       - name: Moon version
         shell: pwsh
