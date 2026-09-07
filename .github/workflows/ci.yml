@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s nightly
           echo "MOON_HOME=$HOME/.moon" >> "$GITHUB_ENV"
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
@@ -202,7 +202,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash
+          curl -fsSL https://cli.moonbitlang.com/install/unix.sh | bash -s nightly
           echo "MOON_HOME=$HOME/.moon" >> "$GITHUB_ENV"
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
 
