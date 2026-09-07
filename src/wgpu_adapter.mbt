@@ -25,7 +25,7 @@ pub fn Adapter::request_device_sync(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -46,7 +46,7 @@ pub fn Adapter::request_device_sync_ptr(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -78,7 +78,7 @@ pub fn Adapter::request_device_async_device(
   future_id : UInt64,
 ) -> Device {
   let _ = self
-  { raw: @c.adapter_request_device_async_device(future_id) }
+  { raw: @c.adapter_request_device_async_device(future_id), }
 }
 
 ///|
@@ -174,7 +174,7 @@ pub fn Adapter::request_device_sync_with_features(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -254,7 +254,7 @@ pub fn Adapter::request_device_sync_with_features_and_limits(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -273,7 +273,7 @@ pub fn Adapter::request_device_sync_timestamp_query(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -292,7 +292,7 @@ pub fn Adapter::request_device_sync_timestamp_query_inside_encoders(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -311,7 +311,7 @@ pub fn Adapter::request_device_sync_timestamp_query_inside_passes(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -330,7 +330,7 @@ pub fn Adapter::request_device_sync_immediates(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -349,7 +349,7 @@ pub fn Adapter::request_device_sync_texture_binding_array(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -368,7 +368,7 @@ pub fn Adapter::request_device_sync_clear_texture(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -387,7 +387,7 @@ pub fn Adapter::request_device_sync_multiview(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -406,7 +406,7 @@ pub fn Adapter::request_device_sync_pipeline_statistics_query(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -425,7 +425,7 @@ pub fn Adapter::request_device_sync_spirv_shader_passthrough(
       @c.adapter_request_device_sync_last_status_u32(),
     )
   }
-  { raw: device_raw }
+  { raw: device_raw, }
 }
 
 ///|
@@ -1354,7 +1354,7 @@ pub fn Adapter::release(self : Adapter) -> Unit {
 ///|
 pub fn Adapter::add_ref(self : Adapter) -> Adapter {
   @c.wgpuAdapterAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|

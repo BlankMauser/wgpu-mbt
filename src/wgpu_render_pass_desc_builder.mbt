@@ -159,18 +159,11 @@ pub fn RenderPassDescBuilder::begin(
   self : RenderPassDescBuilder,
   encoder : CommandEncoder,
 ) -> RenderPass raise RenderPassDescError {
-  try {
-    let desc = self.finish_descriptor_ptr()
-    let pass = encoder.begin_render_pass(desc)
-    @c.render_pass_descriptor_free(desc)
-    self.free()
-    pass
-  } catch {
-    e => {
-      self.free()
-      raise e
-    }
-  }
+  defer self.free()
+  let desc = self.finish_descriptor_ptr()
+  let pass = encoder.begin_render_pass(desc)
+  @c.render_pass_descriptor_free(desc)
+  pass
 }
 
 ///|

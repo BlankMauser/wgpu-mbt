@@ -22,7 +22,7 @@
 /// builder automatically.
 pub fn ComputePipelineDescBuilder::new(
   shader_module : ShaderModule,
-  layout? : PipelineLayout = { raw: @c.null_pipeline_layout() },
+  layout? : PipelineLayout = { raw: @c.null_pipeline_layout(), },
 ) -> ComputePipelineDescBuilder raise ComputePipelineDescError {
   let raw = @c.compute_pipeline_desc_builder_new(layout.raw, shader_module.raw)
   if @c.compute_pipeline_desc_builder_is_null(raw) {
@@ -68,18 +68,11 @@ pub fn ComputePipelineDescBuilder::create_pipeline(
   self : ComputePipelineDescBuilder,
   device : Device,
 ) -> ComputePipeline raise ComputePipelineDescError {
-  try {
-    let desc = self.finish_descriptor_ptr()
-    let pipeline = device.create_compute_pipeline_ptr(desc)
-    @c.compute_pipeline_descriptor_free(desc)
-    self.free()
-    pipeline
-  } catch {
-    e => {
-      self.free()
-      raise e
-    }
-  }
+  defer self.free()
+  let desc = self.finish_descriptor_ptr()
+  let pipeline = device.create_compute_pipeline_ptr(desc)
+  @c.compute_pipeline_descriptor_free(desc)
+  pipeline
 }
 
 ///|
@@ -140,7 +133,7 @@ pub const COMPUTE_PIPELINE_DESC_ERR_OOM : UInt = 4U
 /// builder automatically.
 pub fn RenderPipelineDescBuilder::new(
   shader_module : ShaderModule,
-  layout? : PipelineLayout = { raw: @c.null_pipeline_layout() },
+  layout? : PipelineLayout = { raw: @c.null_pipeline_layout(), },
 ) -> RenderPipelineDescBuilder raise RenderPipelineDescError {
   let raw = @c.render_pipeline_desc_builder_new(layout.raw, shader_module.raw)
   if @c.render_pipeline_desc_builder_is_null(raw) {
@@ -564,18 +557,11 @@ pub fn RenderPipelineDescBuilder::create_pipeline(
   self : RenderPipelineDescBuilder,
   device : Device,
 ) -> RenderPipeline raise RenderPipelineDescError {
-  try {
-    let desc = self.finish_descriptor_ptr()
-    let pipeline = device.create_render_pipeline_ptr(desc)
-    @c.render_pipeline_descriptor_free(desc)
-    self.free()
-    pipeline
-  } catch {
-    e => {
-      self.free()
-      raise e
-    }
-  }
+  defer self.free()
+  let desc = self.finish_descriptor_ptr()
+  let pipeline = device.create_render_pipeline_ptr(desc)
+  @c.render_pipeline_descriptor_free(desc)
+  pipeline
 }
 
 ///|

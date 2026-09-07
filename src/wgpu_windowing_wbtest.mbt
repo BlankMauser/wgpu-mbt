@@ -199,8 +199,8 @@ test "attached surface owner finalizes on the macOS main thread" {
 ///|
 test "windowing generic constructor rejects backend mismatch before native call" {
   let window : TestWindow = {
-    window: { raw: AppKit(@windowing.AppKitWindowHandle::new(1UL)) },
-    display: { raw: Windows(@windowing.WindowsDisplayHandle::new()) },
+    window: { raw: AppKit(@windowing.AppKitWindowHandle::new(1UL)), },
+    display: { raw: Windows(@windowing.WindowsDisplayHandle::new()), },
   }
   let instance = Instance::create()
   try instance.create_surface_from_window(window) catch {

@@ -14,12 +14,12 @@
 
 ///|
 pub fn Device::queue(self : Device) -> Queue {
-  { raw: @c.device_get_queue(self.raw) }
+  { raw: @c.device_get_queue(self.raw), }
 }
 
 ///|
 pub fn Device::create_command_encoder(self : Device) -> CommandEncoder {
-  { raw: @c.device_create_command_encoder(self.raw) }
+  { raw: @c.device_create_command_encoder(self.raw), }
 }
 
 ///|
@@ -27,7 +27,7 @@ pub fn Device::create_command_encoder_ptr(
   self : Device,
   descriptor : @c.WGPUCommandEncoderDescriptorPtr,
 ) -> CommandEncoder {
-  { raw: @c.wgpuDeviceCreateCommandEncoder(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateCommandEncoder(self.raw, descriptor), }
 }
 
 ///|
@@ -674,7 +674,7 @@ pub fn Device::create_buffer_ptr(
   self : Device,
   descriptor : @c.WGPUBufferDescriptorPtr,
 ) -> Buffer {
-  { raw: @c.device_create_buffer_ptr_tracked(self.raw, descriptor) }
+  { raw: @c.device_create_buffer_ptr_tracked(self.raw, descriptor), }
 }
 
 ///|
@@ -719,7 +719,7 @@ pub fn Device::create_query_set_occlusion(
   self : Device,
   count : UInt,
 ) -> QuerySet {
-  { raw: @c.device_create_query_set_occlusion(self.raw, count) }
+  { raw: @c.device_create_query_set_occlusion(self.raw, count), }
 }
 
 ///|
@@ -727,7 +727,7 @@ pub fn Device::create_query_set_timestamp(
   self : Device,
   count : UInt,
 ) -> QuerySet {
-  { raw: @c.device_create_query_set_timestamp(self.raw, count) }
+  { raw: @c.device_create_query_set_timestamp(self.raw, count), }
 }
 
 ///|
@@ -767,7 +767,7 @@ pub fn Device::create_query_set_ptr(
   self : Device,
   descriptor : @c.WGPUQuerySetDescriptorPtr,
 ) -> QuerySet {
-  { raw: @c.wgpuDeviceCreateQuerySet(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateQuerySet(self.raw, descriptor), }
 }
 
 ///|
@@ -777,7 +777,7 @@ pub fn Device::create_shader_module_wgsl(
 ) -> ShaderModule {
   let bytes = utf8_bytes(code)
   let len = bytes.length().to_uint64()
-  { raw: @c.device_create_shader_module_wgsl(self.raw, bytes, len) }
+  { raw: @c.device_create_shader_module_wgsl(self.raw, bytes, len), }
 }
 
 ///|
@@ -788,7 +788,7 @@ pub fn Device::create_shader_module_glsl(
 ) -> ShaderModule {
   let bytes = utf8_bytes(code)
   let len = bytes.length().to_uint64()
-  { raw: @c.device_create_shader_module_glsl(self.raw, stage_u64, bytes, len) }
+  { raw: @c.device_create_shader_module_glsl(self.raw, stage_u64, bytes, len), }
 }
 
 ///|
@@ -797,7 +797,7 @@ pub fn Device::create_shader_module_spirv(
   spirv_le_bytes : Bytes,
 ) -> ShaderModule {
   let len = spirv_le_bytes.length().to_uint64()
-  { raw: @c.device_create_shader_module_spirv(self.raw, spirv_le_bytes, len) }
+  { raw: @c.device_create_shader_module_spirv(self.raw, spirv_le_bytes, len), }
 }
 
 ///|
@@ -805,7 +805,7 @@ pub fn Device::create_shader_module_ptr(
   self : Device,
   descriptor : @c.WGPUShaderModuleDescriptorPtr,
 ) -> ShaderModule {
-  { raw: @c.wgpuDeviceCreateShaderModule(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateShaderModule(self.raw, descriptor), }
 }
 
 ///|
@@ -813,7 +813,7 @@ pub fn Device::create_compute_pipeline(
   self : Device,
   shader_module : ShaderModule,
 ) -> ComputePipeline {
-  { raw: @c.device_create_compute_pipeline(self.raw, shader_module.raw) }
+  { raw: @c.device_create_compute_pipeline(self.raw, shader_module.raw), }
 }
 
 ///|
@@ -823,11 +823,9 @@ pub fn Device::create_compute_pipeline_entry(
   entry_point : String,
 ) -> ComputePipeline raise ComputePipelineDescError {
   let builder = ComputePipelineDescBuilder::new(shader_module)
-  builder.set_entry_point(entry_point) catch {
-    e => {
-      builder.free()
-      raise e
-    }
+  {
+    errdefer builder.free()
+    builder.set_entry_point(entry_point)
   }
   let desc = builder.finish_descriptor_ptr()
   let pipeline = self.create_compute_pipeline_ptr(desc)
@@ -840,7 +838,7 @@ pub fn Device::create_compute_pipeline_ptr(
   self : Device,
   descriptor : @c.WGPUComputePipelineDescriptorPtr,
 ) -> ComputePipeline {
-  { raw: @c.wgpuDeviceCreateComputePipeline(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateComputePipeline(self.raw, descriptor), }
 }
 
 ///|
@@ -848,7 +846,7 @@ pub fn Device::create_texture_ptr(
   self : Device,
   descriptor : @c.WGPUTextureDescriptorPtr,
 ) -> Texture {
-  { raw: @c.wgpuDeviceCreateTexture(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateTexture(self.raw, descriptor), }
 }
 
 ///|
@@ -857,7 +855,7 @@ pub fn Device::create_texture_rgba8_2d(
   width : UInt,
   height : UInt,
 ) -> Texture {
-  { raw: @c.device_create_texture_rgba8_2d(self.raw, width, height) }
+  { raw: @c.device_create_texture_rgba8_2d(self.raw, width, height), }
 }
 
 ///|
@@ -866,7 +864,7 @@ pub fn Device::create_texture_depth24plus_2d(
   width : UInt,
   height : UInt,
 ) -> Texture {
-  { raw: @c.device_create_texture_depth24plus_2d(self.raw, width, height) }
+  { raw: @c.device_create_texture_depth24plus_2d(self.raw, width, height), }
 }
 
 ///|
@@ -986,7 +984,7 @@ pub fn Device::create_render_pipeline_rgba8(
   self : Device,
   shader_module : ShaderModule,
 ) -> RenderPipeline {
-  { raw: @c.device_create_render_pipeline_rgba8(self.raw, shader_module.raw) }
+  { raw: @c.device_create_render_pipeline_rgba8(self.raw, shader_module.raw), }
 }
 
 ///|
@@ -994,7 +992,7 @@ pub fn Device::create_render_pipeline_ptr(
   self : Device,
   descriptor : @c.WGPURenderPipelineDescriptorPtr,
 ) -> RenderPipeline {
-  { raw: @c.wgpuDeviceCreateRenderPipeline(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateRenderPipeline(self.raw, descriptor), }
 }
 
 ///|
@@ -1100,7 +1098,7 @@ pub fn Device::create_render_pipeline_rgba8_depth(
 pub fn Device::create_render_bundle_encoder_rgba8(
   self : Device,
 ) -> RenderBundleEncoder {
-  { raw: @c.device_create_render_bundle_encoder_rgba8(self.raw) }
+  { raw: @c.device_create_render_bundle_encoder_rgba8(self.raw), }
 }
 
 ///|
@@ -1108,7 +1106,7 @@ pub fn Device::create_render_bundle_encoder_ptr(
   self : Device,
   descriptor : @c.WGPURenderBundleEncoderDescriptorPtr,
 ) -> RenderBundleEncoder {
-  { raw: @c.wgpuDeviceCreateRenderBundleEncoder(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateRenderBundleEncoder(self.raw, descriptor), }
 }
 
 ///|
@@ -1159,7 +1157,7 @@ pub fn Device::create_bind_group_layout_ptr(
   self : Device,
   descriptor : @c.WGPUBindGroupLayoutDescriptorPtr,
 ) -> BindGroupLayout {
-  { raw: @c.wgpuDeviceCreateBindGroupLayout(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateBindGroupLayout(self.raw, descriptor), }
 }
 
 ///|
@@ -1167,26 +1165,26 @@ pub fn Device::create_bind_group_ptr(
   self : Device,
   descriptor : @c.WGPUBindGroupDescriptorPtr,
 ) -> BindGroup {
-  { raw: @c.wgpuDeviceCreateBindGroup(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateBindGroup(self.raw, descriptor), }
 }
 
 ///|
 pub fn Device::create_bind_group_layout_empty(self : Device) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_empty(self.raw) }
+  { raw: @c.device_create_bind_group_layout_empty(self.raw), }
 }
 
 ///|
 pub fn Device::create_bind_group_layout_uniform_buffer(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_uniform_buffer(self.raw) }
+  { raw: @c.device_create_bind_group_layout_uniform_buffer(self.raw), }
 }
 
 ///|
 pub fn Device::create_bind_group_layout_uniform_buffer_dynamic(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_uniform_buffer_dynamic(self.raw) }
+  { raw: @c.device_create_bind_group_layout_uniform_buffer_dynamic(self.raw), }
 }
 
 ///|
@@ -1223,7 +1221,7 @@ pub fn Device::create_bind_group_uniform_buffer_16(
 pub fn Device::create_bind_group_layout_storage_buffer(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_storage_buffer(self.raw) }
+  { raw: @c.device_create_bind_group_layout_storage_buffer(self.raw), }
 }
 
 ///|
@@ -1239,32 +1237,32 @@ pub fn Device::create_bind_group_layout_storage_texture_rgba8_writeonly(
 
 ///|
 pub fn Device::create_sampler_nearest_clamp(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_nearest_clamp(self.raw) }
+  { raw: @c.device_create_sampler_nearest_clamp(self.raw), }
 }
 
 ///|
 pub fn Device::create_sampler_linear_clamp(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_linear_clamp(self.raw) }
+  { raw: @c.device_create_sampler_linear_clamp(self.raw), }
 }
 
 ///|
 pub fn Device::create_sampler_nearest_repeat(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_nearest_repeat(self.raw) }
+  { raw: @c.device_create_sampler_nearest_repeat(self.raw), }
 }
 
 ///|
 pub fn Device::create_sampler_linear_repeat(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_linear_repeat(self.raw) }
+  { raw: @c.device_create_sampler_linear_repeat(self.raw), }
 }
 
 ///|
 pub fn Device::create_sampler_nearest_mirror_repeat(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_nearest_mirror_repeat(self.raw) }
+  { raw: @c.device_create_sampler_nearest_mirror_repeat(self.raw), }
 }
 
 ///|
 pub fn Device::create_sampler_linear_mirror_repeat(self : Device) -> Sampler {
-  { raw: @c.device_create_sampler_linear_mirror_repeat(self.raw) }
+  { raw: @c.device_create_sampler_linear_mirror_repeat(self.raw), }
 }
 
 ///|
@@ -1272,7 +1270,7 @@ pub fn Device::create_sampler_ptr(
   self : Device,
   descriptor : @c.WGPUSamplerDescriptorPtr,
 ) -> Sampler {
-  { raw: @c.wgpuDeviceCreateSampler(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateSampler(self.raw, descriptor), }
 }
 
 ///|
@@ -1310,21 +1308,21 @@ pub fn Device::create_sampler_u32(
 pub fn Device::create_bind_group_layout_sampler_texture_2d(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_sampler_texture_2d(self.raw) }
+  { raw: @c.device_create_bind_group_layout_sampler_texture_2d(self.raw), }
 }
 
 ///|
 pub fn Device::create_bind_group_layout_sampler_filtering(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_sampler_filtering(self.raw) }
+  { raw: @c.device_create_bind_group_layout_sampler_filtering(self.raw), }
 }
 
 ///|
 pub fn Device::create_bind_group_layout_texture_2d_float(
   self : Device,
 ) -> BindGroupLayout {
-  { raw: @c.device_create_bind_group_layout_texture_2d_float(self.raw) }
+  { raw: @c.device_create_bind_group_layout_texture_2d_float(self.raw), }
 }
 
 ///|
@@ -1379,7 +1377,7 @@ pub fn Device::create_pipeline_layout_ptr(
   self : Device,
   descriptor : @c.WGPUPipelineLayoutDescriptorPtr,
 ) -> PipelineLayout {
-  { raw: @c.wgpuDeviceCreatePipelineLayout(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreatePipelineLayout(self.raw, descriptor), }
 }
 
 ///|
@@ -1387,7 +1385,7 @@ pub fn Device::create_pipeline_layout_1(
   self : Device,
   bind_group_layout : BindGroupLayout,
 ) -> PipelineLayout {
-  { raw: @c.device_create_pipeline_layout_1(self.raw, bind_group_layout.raw) }
+  { raw: @c.device_create_pipeline_layout_1(self.raw, bind_group_layout.raw), }
 }
 
 ///|
@@ -1413,7 +1411,7 @@ pub fn Device::create_pipeline_layout_many(
   let raw_layouts : Array[@c.BindGroupLayout] = bind_group_layouts.map(l => {
     l.raw
   })
-  { raw: @c.device_create_pipeline_layout_many(self.raw, raw_layouts) }
+  { raw: @c.device_create_pipeline_layout_many(self.raw, raw_layouts), }
 }
 
 ///|
@@ -1533,11 +1531,9 @@ pub fn Device::create_compute_pipeline_with_layout_entry(
   entry_point : String,
 ) -> ComputePipeline raise ComputePipelineDescError {
   let builder = ComputePipelineDescBuilder::new(shader_module, layout~)
-  builder.set_entry_point(entry_point) catch {
-    e => {
-      builder.free()
-      raise e
-    }
+  {
+    errdefer builder.free()
+    builder.set_entry_point(entry_point)
   }
   let desc = builder.finish_descriptor_ptr()
   let pipeline = self.create_compute_pipeline_ptr(desc)
@@ -1582,7 +1578,7 @@ pub fn Device::release(self : Device) -> Unit {
 ///|
 pub fn Device::add_ref(self : Device) -> Device {
   @c.wgpuDeviceAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|

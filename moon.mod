@@ -1,6 +1,6 @@
 name = "Milky2018/wgpu_mbt"
 
-version = "0.16.0"
+version = "0.16.1"
 
 readme = "README.mbt.md"
 
@@ -18,8 +18,8 @@ import {
   "Milky2018/windowing@0.1.0",
 }
 
+source = "src"
+
 options(
-  source: "src",
   "--moonbit-unstable-prebuild": "build.js",
-  exclude: [ "_build", "target", "src/c/target" ],
 )

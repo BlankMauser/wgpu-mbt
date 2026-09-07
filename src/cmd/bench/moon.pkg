@@ -2,7 +2,8 @@ import {
   "Milky2018/wgpu_mbt" @wgpu,
 }
 
+pkgtype(kind: "executable")
+
 options(
-  "is-main": true,
   targets: { "main.mbt": [ "native" ] },
 )

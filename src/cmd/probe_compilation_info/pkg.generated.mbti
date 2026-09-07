@@ -13,4 +13,3 @@ pub const WGSL : String = "@compute @workgroup_size(1)\nfn main() {}\n"
 // Type aliases
 
 // Traits
-

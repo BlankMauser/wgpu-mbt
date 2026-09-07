@@ -14,7 +14,7 @@
 
 ///|
 pub fn CommandEncoder::finish(self : CommandEncoder) -> CommandBuffer {
-  { raw: @c.command_encoder_finish(self.raw) }
+  { raw: @c.command_encoder_finish(self.raw), }
 }
 
 ///|
@@ -22,7 +22,7 @@ pub fn CommandEncoder::finish_ptr(
   self : CommandEncoder,
   descriptor : @c.WGPUCommandBufferDescriptorPtr,
 ) -> CommandBuffer {
-  { raw: @c.wgpuCommandEncoderFinish(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderFinish(self.raw, descriptor), }
 }
 
 ///|
@@ -289,7 +289,7 @@ pub fn CommandEncoder::write_timestamp(
 
 ///|
 pub fn CommandEncoder::begin_compute_pass(self : CommandEncoder) -> ComputePass {
-  { raw: @c.command_encoder_begin_compute_pass(self.raw) }
+  { raw: @c.command_encoder_begin_compute_pass(self.raw), }
 }
 
 ///|
@@ -297,7 +297,7 @@ pub fn CommandEncoder::begin_compute_pass_ptr(
   self : CommandEncoder,
   descriptor : @c.WGPUComputePassDescriptorPtr,
 ) -> ComputePass {
-  { raw: @c.wgpuCommandEncoderBeginComputePass(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderBeginComputePass(self.raw, descriptor), }
 }
 
 ///|
@@ -342,7 +342,7 @@ pub fn CommandEncoder::begin_render_pass_ptr(
   self : CommandEncoder,
   descriptor : @c.WGPURenderPassDescriptorPtr,
 ) -> RenderPass {
-  { raw: @c.wgpuCommandEncoderBeginRenderPass(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderBeginRenderPass(self.raw, descriptor), }
 }
 
 ///|
@@ -350,7 +350,7 @@ pub fn CommandEncoder::begin_render_pass_color(
   self : CommandEncoder,
   view : TextureView,
 ) -> RenderPass {
-  { raw: @c.command_encoder_begin_render_pass_color(self.raw, view.raw) }
+  { raw: @c.command_encoder_begin_render_pass_color(self.raw, view.raw), }
 }
 
 ///|
@@ -597,7 +597,7 @@ pub fn CommandEncoder::begin_render_pass_color_load(
   self : CommandEncoder,
   view : TextureView,
 ) -> RenderPass {
-  { raw: @c.command_encoder_begin_render_pass_color_load(self.raw, view.raw) }
+  { raw: @c.command_encoder_begin_render_pass_color_load(self.raw, view.raw), }
 }
 
 ///|
@@ -1354,7 +1354,7 @@ pub fn RenderBundleEncoder::pop_debug_group(self : RenderBundleEncoder) -> Unit 
 
 ///|
 pub fn RenderBundleEncoder::finish(self : RenderBundleEncoder) -> RenderBundle {
-  { raw: @c.render_bundle_encoder_finish(self.raw) }
+  { raw: @c.render_bundle_encoder_finish(self.raw), }
 }
 
 ///|
@@ -1362,7 +1362,7 @@ pub fn RenderBundleEncoder::finish_ptr(
   self : RenderBundleEncoder,
   descriptor : @c.WGPURenderBundleDescriptorPtr,
 ) -> RenderBundle {
-  { raw: @c.wgpuRenderBundleEncoderFinish(self.raw, descriptor) }
+  { raw: @c.wgpuRenderBundleEncoderFinish(self.raw, descriptor), }
 }
 
 ///|
@@ -1405,37 +1405,37 @@ pub fn RenderBundleEncoder::add_ref(
   self : RenderBundleEncoder,
 ) -> RenderBundleEncoder {
   @c.wgpuRenderBundleEncoderAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 pub fn RenderBundle::add_ref(self : RenderBundle) -> RenderBundle {
   @c.wgpuRenderBundleAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 pub fn CommandEncoder::add_ref(self : CommandEncoder) -> CommandEncoder {
   @c.wgpuCommandEncoderAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 pub fn CommandBuffer::add_ref(self : CommandBuffer) -> CommandBuffer {
   @c.wgpuCommandBufferAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 pub fn ComputePass::add_ref(self : ComputePass) -> ComputePass {
   @c.wgpuComputePassEncoderAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 pub fn RenderPass::add_ref(self : RenderPass) -> RenderPass {
   @c.wgpuRenderPassEncoderAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|

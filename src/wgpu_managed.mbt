@@ -77,7 +77,7 @@ pub struct ManagedRenderPass {
 
 ///|
 fn wrap_managed_device(raw : Device, pool : AutoReleasePool) -> ManagedDevice {
-  { raw, pool }
+  { raw, pool, }
 }
 
 ///|
@@ -95,7 +95,7 @@ fn wrap_managed_texture(
   raw : Texture,
   pool : AutoReleasePool,
 ) -> ManagedTexture {
-  { raw, pool }
+  { raw, pool, }
 }
 
 ///|
@@ -125,7 +125,7 @@ fn wrap_managed_command_encoder(
   raw : CommandEncoder,
   pool : AutoReleasePool,
 ) -> ManagedCommandEncoder {
-  { raw, pool }
+  { raw, pool, }
 }
 
 ///|
@@ -171,11 +171,7 @@ pub fn ManagedDevice::create_buffer(
 ) -> ManagedBuffer {
   wrap_managed_buffer(
     self.pool.track_buffer(
-      self.raw.create_buffer(
-        size~,
-        usage~,
-        mapped_at_creation?=Some(mapped_at_creation),
-      ),
+      self.raw.create_buffer(size~, usage~, mapped_at_creation~),
     ),
   )
 }
@@ -238,7 +234,7 @@ pub fn ManagedDevice::create_command_encoder(
 
 ///|
 pub fn ManagedDevice::poll(self : ManagedDevice, wait? : Bool = false) -> Bool {
-  self.raw.poll(wait?=Some(wait))
+  self.raw.poll(wait~)
 }
 
 ///|

@@ -136,7 +136,7 @@ pub fn CommandEncoder::begin_compute_pass_raw(
   self : CommandEncoder,
   descriptor : @c.WGPUComputePassDescriptorPtr,
 ) -> ComputePass {
-  { raw: @c.wgpuCommandEncoderBeginComputePass(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderBeginComputePass(self.raw, descriptor), }
 }
 
 ///|
@@ -144,7 +144,7 @@ pub fn CommandEncoder::begin_render_pass(
   self : CommandEncoder,
   descriptor : @c.WGPURenderPassDescriptorPtr,
 ) -> RenderPass {
-  { raw: @c.wgpuCommandEncoderBeginRenderPass(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderBeginRenderPass(self.raw, descriptor), }
 }
 
 ///|
@@ -226,7 +226,7 @@ pub fn CommandEncoder::finish_raw(
   self : CommandEncoder,
   descriptor : @c.WGPUCommandBufferDescriptorPtr,
 ) -> CommandBuffer {
-  { raw: @c.wgpuCommandEncoderFinish(self.raw, descriptor) }
+  { raw: @c.wgpuCommandEncoderFinish(self.raw, descriptor), }
 }
 
 ///|
@@ -362,7 +362,7 @@ pub fn ComputePipeline::get_bind_group_layout_raw(
   self : ComputePipeline,
   group_index : UInt,
 ) -> BindGroupLayout {
-  { raw: @c.wgpuComputePipelineGetBindGroupLayout(self.raw, group_index) }
+  { raw: @c.wgpuComputePipelineGetBindGroupLayout(self.raw, group_index), }
 }
 
 ///|
@@ -380,7 +380,7 @@ pub fn Device::create_bind_group(
   self : Device,
   descriptor : @c.WGPUBindGroupDescriptorPtr,
 ) -> BindGroup {
-  { raw: @c.wgpuDeviceCreateBindGroup(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateBindGroup(self.raw, descriptor), }
 }
 
 ///|
@@ -388,7 +388,7 @@ pub fn Device::create_bind_group_layout(
   self : Device,
   descriptor : @c.WGPUBindGroupLayoutDescriptorPtr,
 ) -> BindGroupLayout {
-  { raw: @c.wgpuDeviceCreateBindGroupLayout(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateBindGroupLayout(self.raw, descriptor), }
 }
 
 ///|
@@ -396,7 +396,7 @@ pub fn Device::create_buffer_raw(
   self : Device,
   descriptor : @c.WGPUBufferDescriptorPtr,
 ) -> Buffer {
-  { raw: @c.device_create_buffer_ptr_tracked(self.raw, descriptor) }
+  { raw: @c.device_create_buffer_ptr_tracked(self.raw, descriptor), }
 }
 
 ///|
@@ -404,7 +404,7 @@ pub fn Device::create_command_encoder_raw(
   self : Device,
   descriptor : @c.WGPUCommandEncoderDescriptorPtr,
 ) -> CommandEncoder {
-  { raw: @c.wgpuDeviceCreateCommandEncoder(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateCommandEncoder(self.raw, descriptor), }
 }
 
 ///|
@@ -412,7 +412,7 @@ pub fn Device::create_compute_pipeline_raw(
   self : Device,
   descriptor : @c.WGPUComputePipelineDescriptorPtr,
 ) -> ComputePipeline {
-  { raw: @c.wgpuDeviceCreateComputePipeline(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateComputePipeline(self.raw, descriptor), }
 }
 
 ///|
@@ -488,7 +488,7 @@ pub fn Device::create_pipeline_layout(
   self : Device,
   descriptor : @c.WGPUPipelineLayoutDescriptorPtr,
 ) -> PipelineLayout {
-  { raw: @c.wgpuDeviceCreatePipelineLayout(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreatePipelineLayout(self.raw, descriptor), }
 }
 
 ///|
@@ -496,7 +496,7 @@ pub fn Device::create_query_set(
   self : Device,
   descriptor : @c.WGPUQuerySetDescriptorPtr,
 ) -> QuerySet {
-  { raw: @c.wgpuDeviceCreateQuerySet(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateQuerySet(self.raw, descriptor), }
 }
 
 ///|
@@ -504,7 +504,7 @@ pub fn Device::create_render_bundle_encoder(
   self : Device,
   descriptor : @c.WGPURenderBundleEncoderDescriptorPtr,
 ) -> RenderBundleEncoder {
-  { raw: @c.wgpuDeviceCreateRenderBundleEncoder(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateRenderBundleEncoder(self.raw, descriptor), }
 }
 
 ///|
@@ -512,7 +512,7 @@ pub fn Device::create_render_pipeline(
   self : Device,
   descriptor : @c.WGPURenderPipelineDescriptorPtr,
 ) -> RenderPipeline {
-  { raw: @c.wgpuDeviceCreateRenderPipeline(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateRenderPipeline(self.raw, descriptor), }
 }
 
 ///|
@@ -561,7 +561,7 @@ pub fn Device::create_sampler(
   self : Device,
   descriptor : @c.WGPUSamplerDescriptorPtr,
 ) -> Sampler {
-  { raw: @c.wgpuDeviceCreateSampler(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateSampler(self.raw, descriptor), }
 }
 
 ///|
@@ -569,7 +569,7 @@ pub fn Device::create_shader_module(
   self : Device,
   descriptor : @c.WGPUShaderModuleDescriptorPtr,
 ) -> ShaderModule {
-  { raw: @c.wgpuDeviceCreateShaderModule(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateShaderModule(self.raw, descriptor), }
 }
 
 ///|
@@ -577,7 +577,7 @@ pub fn Device::create_shader_module_spir_v(
   self : Device,
   descriptor : @c.WGPUShaderModuleDescriptorSpirVPtr,
 ) -> ShaderModule {
-  { raw: @c.wgpuDeviceCreateShaderModuleSpirV(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateShaderModuleSpirV(self.raw, descriptor), }
 }
 
 ///|
@@ -585,7 +585,7 @@ pub fn Device::create_texture(
   self : Device,
   descriptor : @c.WGPUTextureDescriptorPtr,
 ) -> Texture {
-  { raw: @c.wgpuDeviceCreateTexture(self.raw, descriptor) }
+  { raw: @c.wgpuDeviceCreateTexture(self.raw, descriptor), }
 }
 
 ///|
@@ -624,7 +624,7 @@ pub fn Device::get_lost_future(self : Device) -> @c.WGPUFuture {
 
 ///|
 pub fn Device::get_queue(self : Device) -> Queue {
-  { raw: @c.wgpuDeviceGetQueue(self.raw) }
+  { raw: @c.wgpuDeviceGetQueue(self.raw), }
 }
 
 ///|
@@ -871,7 +871,7 @@ pub fn RenderBundleEncoder::finish_raw(
   self : RenderBundleEncoder,
   descriptor : @c.WGPURenderBundleDescriptorPtr,
 ) -> RenderBundle {
-  { raw: @c.wgpuRenderBundleEncoderFinish(self.raw, descriptor) }
+  { raw: @c.wgpuRenderBundleEncoderFinish(self.raw, descriptor), }
 }
 
 ///|
@@ -1227,7 +1227,7 @@ pub fn RenderPipeline::get_bind_group_layout_raw(
   self : RenderPipeline,
   group_index : UInt,
 ) -> BindGroupLayout {
-  { raw: @c.wgpuRenderPipelineGetBindGroupLayout(self.raw, group_index) }
+  { raw: @c.wgpuRenderPipelineGetBindGroupLayout(self.raw, group_index), }
 }
 
 ///|
@@ -1320,7 +1320,7 @@ pub fn Texture::create_view_raw(
   self : Texture,
   descriptor : @c.WGPUTextureViewDescriptorPtr,
 ) -> TextureView {
-  { raw: @c.wgpuTextureCreateView(self.raw, descriptor) }
+  { raw: @c.wgpuTextureCreateView(self.raw, descriptor), }
 }
 
 ///|

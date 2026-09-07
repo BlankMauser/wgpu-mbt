@@ -1788,7 +1788,9 @@ pub fn Buffer::usage_u64(Self) -> BufferUsage
 pub struct BufferUsage {
   raw : UInt64
 }
+pub fn BufferUsage::equal(Self, Self) -> Bool
 pub fn BufferUsage::from_u64(UInt64) -> Self
+pub fn BufferUsage::not_equal(Self, Self) -> Bool
 pub fn BufferUsage::to_u64(Self) -> UInt64
 pub impl Eq for BufferUsage
 
@@ -1877,7 +1879,9 @@ pub struct CompilationMessage {
 pub struct CompositeAlphaMode {
   raw : UInt
 }
+pub fn CompositeAlphaMode::equal(Self, Self) -> Bool
 pub fn CompositeAlphaMode::from_u32(UInt) -> Self
+pub fn CompositeAlphaMode::not_equal(Self, Self) -> Bool
 pub fn CompositeAlphaMode::to_u32(Self) -> UInt
 pub impl Eq for CompositeAlphaMode
 
@@ -2315,7 +2319,9 @@ pub struct ManagedTextureView {
 pub struct MapMode {
   raw : UInt64
 }
+pub fn MapMode::equal(Self, Self) -> Bool
 pub fn MapMode::from_u64(UInt64) -> Self
+pub fn MapMode::not_equal(Self, Self) -> Bool
 pub fn MapMode::to_u64(Self) -> UInt64
 pub impl Eq for MapMode
 
@@ -2332,7 +2338,9 @@ pub fn PipelineLayout::set_label(Self, String) -> Unit
 pub struct PresentMode {
   raw : UInt
 }
+pub fn PresentMode::equal(Self, Self) -> Bool
 pub fn PresentMode::from_u32(UInt) -> Self
+pub fn PresentMode::not_equal(Self, Self) -> Bool
 pub fn PresentMode::to_u32(Self) -> UInt
 pub impl Eq for PresentMode
 
@@ -2578,7 +2586,9 @@ pub fn ShaderModule::set_label(Self, String) -> Unit
 pub struct ShaderStage {
   raw : UInt64
 }
+pub fn ShaderStage::equal(Self, Self) -> Bool
 pub fn ShaderStage::from_u64(UInt64) -> Self
+pub fn ShaderStage::not_equal(Self, Self) -> Bool
 pub fn ShaderStage::to_u64(Self) -> UInt64
 pub impl Eq for ShaderStage
 
@@ -2697,21 +2707,27 @@ pub fn Texture::width_u32(Self) -> UInt
 pub struct TextureDimension {
   raw : UInt
 }
+pub fn TextureDimension::equal(Self, Self) -> Bool
 pub fn TextureDimension::from_u32(UInt) -> Self
+pub fn TextureDimension::not_equal(Self, Self) -> Bool
 pub fn TextureDimension::to_u32(Self) -> UInt
 pub impl Eq for TextureDimension
 
 pub struct TextureFormat {
   raw : UInt
 }
+pub fn TextureFormat::equal(Self, Self) -> Bool
 pub fn TextureFormat::from_u32(UInt) -> Self
+pub fn TextureFormat::not_equal(Self, Self) -> Bool
 pub fn TextureFormat::to_u32(Self) -> UInt
 pub impl Eq for TextureFormat
 
 pub struct TextureUsage {
   raw : UInt64
 }
+pub fn TextureUsage::equal(Self, Self) -> Bool
 pub fn TextureUsage::from_u64(UInt64) -> Self
+pub fn TextureUsage::not_equal(Self, Self) -> Bool
 pub fn TextureUsage::to_u64(Self) -> UInt64
 pub impl Eq for TextureUsage
 
@@ -2734,4 +2750,3 @@ pub struct WaitAnyResult {
 // Type aliases
 
 // Traits
-

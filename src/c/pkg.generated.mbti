@@ -2361,4 +2361,3 @@ pub type WGPUSubmissionIndex = UInt64
 pub type WGPUTextureUsage = UInt64
 
 // Traits
-

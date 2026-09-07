@@ -14,7 +14,7 @@
 
 ///|
 pub fn Texture::create_view(self : Texture) -> TextureView {
-  { raw: @c.texture_create_view(self.raw) }
+  { raw: @c.texture_create_view(self.raw), }
 }
 
 ///|
@@ -22,7 +22,7 @@ pub fn Texture::create_view_ptr(
   self : Texture,
   descriptor : @c.WGPUTextureViewDescriptorPtr,
 ) -> TextureView {
-  { raw: @c.wgpuTextureCreateView(self.raw, descriptor) }
+  { raw: @c.wgpuTextureCreateView(self.raw, descriptor), }
 }
 
 ///|
@@ -56,7 +56,7 @@ pub fn Texture::create_view_2d(
   base_mip_level : UInt,
   mip_level_count : UInt,
 ) -> TextureView {
-  { raw: @c.texture_create_view_2d(self.raw, base_mip_level, mip_level_count) }
+  { raw: @c.texture_create_view_2d(self.raw, base_mip_level, mip_level_count), }
 }
 
 ///|
@@ -126,13 +126,13 @@ pub fn TextureView::release(self : TextureView) -> Unit {
 ///|
 pub fn TextureView::add_ref(self : TextureView) -> TextureView {
   @c.texture_view_add_ref(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|
 /// Null texture view for nullable descriptor slots. Do not release it.
 pub fn TextureView::null() -> TextureView {
-  { raw: @c.null_texture_view() }
+  { raw: @c.null_texture_view(), }
 }
 
 ///|
@@ -148,7 +148,7 @@ pub fn Texture::release(self : Texture) -> Unit {
 ///|
 pub fn Texture::add_ref(self : Texture) -> Texture {
   @c.texture_add_ref(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|

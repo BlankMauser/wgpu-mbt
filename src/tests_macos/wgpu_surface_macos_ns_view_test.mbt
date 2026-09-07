@@ -55,7 +55,7 @@ test "wgpu surface windowing AppKit path" {
   inspect(@wgpu_c.opaque_ptr_is_null(view), content="false")
   let view_u64 = @wgpu_c.opaque_ptr_to_u64(view)
   inspect(view_u64 != 0UL, content="true")
-  let window : AppKitSurfaceWindow = { ns_view: view_u64 }
+  let window : AppKitSurfaceWindow = { ns_view: view_u64, }
   let instance = @wgpu.Instance::create()
   let original_surface = instance.create_surface_from_window(window)
   let surface = original_surface.add_ref()

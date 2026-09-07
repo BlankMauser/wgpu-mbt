@@ -373,7 +373,7 @@ pub fn Surface::configure_view_formats_u32_or_raise(
 
 ///|
 pub fn Surface::get_current_texture(self : Surface) -> SurfaceTexture {
-  { raw: @c.surface_texture_acquire(self.raw) }
+  { raw: @c.surface_texture_acquire(self.raw), }
 }
 
 ///|
@@ -398,7 +398,7 @@ pub fn Surface::get_current_frame_or_raise(
   let st = self.get_current_texture_or_raise()
   let tex = st.take_texture()
   st.release()
-  { surface: self.add_ref(), texture: tex }
+  { surface: self.add_ref(), texture: tex, }
 }
 
 ///|
@@ -421,7 +421,7 @@ pub fn SurfaceTexture::require_success(
 
 ///|
 pub fn SurfaceTexture::take_texture(self : SurfaceTexture) -> Texture {
-  { raw: @c.surface_texture_take_texture(self.raw) }
+  { raw: @c.surface_texture_take_texture(self.raw), }
 }
 
 ///|

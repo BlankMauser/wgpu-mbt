@@ -37,4 +37,3 @@ pub fn vertices_pos2_fullscreen_tri_bytes() -> Bytes
 // Type aliases
 
 // Traits
-

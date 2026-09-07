@@ -15,7 +15,7 @@
 ///|
 pub fn Instance::create() -> Instance raise WgpuError {
   require_native()
-  { raw: @c.create_instance() }
+  { raw: @c.create_instance(), }
 }
 
 ///|
@@ -23,7 +23,7 @@ pub fn Instance::create_ptr(
   descriptor : @c.WGPUInstanceDescriptorPtr,
 ) -> Instance raise WgpuError {
   require_native()
-  { raw: @c.wgpuCreateInstance(descriptor) }
+  { raw: @c.wgpuCreateInstance(descriptor), }
 }
 
 ///|
@@ -261,7 +261,7 @@ pub fn Instance::request_adapter_async_adapter(
   future_id : UInt64,
 ) -> Adapter {
   let _ = self
-  { raw: @c.instance_request_adapter_async_adapter(future_id) }
+  { raw: @c.instance_request_adapter_async_adapter(future_id), }
 }
 
 ///|
@@ -327,7 +327,7 @@ pub fn Instance::wait_any_one(
   )
   let status = (packed & 0xFFFF_FFFFUL).to_int().reinterpret_as_uint()
   let completed = packed >> 32 != 0UL
-  { status, completed }
+  { status, completed, }
 }
 
 ///|
@@ -360,7 +360,7 @@ pub fn Instance::wgsl_language_features_count_u64(self : Instance) -> UInt64 {
 
 ///|
 pub fn Instance::generate_report(self : Instance) -> GlobalReport {
-  { raw: @c.instance_generate_report_new(self.raw) }
+  { raw: @c.instance_generate_report_new(self.raw), }
 }
 
 ///|
@@ -742,7 +742,7 @@ pub fn Instance::release(self : Instance) -> Unit {
 ///|
 pub fn Instance::add_ref(self : Instance) -> Instance {
   @c.wgpuInstanceAddRef(self.raw)
-  { raw: self.raw }
+  { raw: self.raw, }
 }
 
 ///|

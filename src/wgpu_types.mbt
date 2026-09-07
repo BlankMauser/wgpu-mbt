@@ -1014,3 +1014,27 @@ pub struct CommandBuffer {
 }
 
 ///|
+
+///|
+pub extend BufferUsage with Eq::{not_equal, equal}
+
+///|
+pub extend CompositeAlphaMode with Eq::{not_equal, equal}
+
+///|
+pub extend MapMode with Eq::{not_equal, equal}
+
+///|
+pub extend PresentMode with Eq::{not_equal, equal}
+
+///|
+pub extend ShaderStage with Eq::{not_equal, equal}
+
+///|
+pub extend TextureDimension with Eq::{not_equal, equal}
+
+///|
+pub extend TextureFormat with Eq::{not_equal, equal}
+
+///|
+pub extend TextureUsage with Eq::{not_equal, equal}

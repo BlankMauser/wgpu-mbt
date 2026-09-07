@@ -17,4 +17,3 @@ pub const WGSL_RENDER : String = "struct VSOut { @builtin(position) pos: vec4<f3
 // Type aliases
 
 // Traits
-
