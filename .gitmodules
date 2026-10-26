@@ -1,0 +1,4 @@
+[submodule "deps/wgpu-native"]
+	path = deps/wgpu-native
+	url = https://github.com/BlankMauser/wgpu-native.git
+	branch = wgpu-30

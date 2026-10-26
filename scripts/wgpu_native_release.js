@@ -1,6 +1,19 @@
 const os = require('os');
 
-const SUPPORTED_RELEASE = {
+// Default (this fork, branch wgpu-30): build wgpu-native from source, from
+// the deps/wgpu-native submodule pinned below (BlankMauser/wgpu-native,
+// wgpu-core/wgpu-hal 30.0.1, the v29 webgpu.h C API). `tag` is a label for
+// the build (written into wgpu-native-meta/wgpu-native-git-tag of the cached
+// release-shaped tree), not a git tag. Needs Rust (cargo) on PATH.
+const SOURCE_BUILD = {
+  repo: 'BlankMauser/wgpu-native',
+  tag: 'v30.0.1-lf.1+src.fa01034',
+  rev: 'fa01034943148094ef915e6895d69c7f905ddca7',
+  submodule: 'deps/wgpu-native',
+};
+
+// MBT_WGPU_NATIVE_SOURCE=official: the upstream release download (wgpu 29).
+const OFFICIAL_RELEASE = {
   repo: 'gfx-rs/wgpu-native',
   tag: 'v29.0.1.1',
   rev: '6aed50955d934ac36049ba8d002034841633ae02',
@@ -141,6 +154,23 @@ const SUPPORTED_RELEASE = {
     },
   },
 };
+
+const USE_OFFICIAL =
+  (process.env.MBT_WGPU_NATIVE_SOURCE || '').trim().toLowerCase() === 'official';
+
+// What the rest of the build uses: the same asset table (file layout per
+// platform) either way; in source mode the sha256 fields are unused and the
+// pinned submodule commit is the identity instead.
+const SUPPORTED_RELEASE = USE_OFFICIAL
+  ? { ...OFFICIAL_RELEASE, fromSource: false }
+  : {
+    repo: SOURCE_BUILD.repo,
+    tag: SOURCE_BUILD.tag,
+    rev: SOURCE_BUILD.rev,
+    submodule: SOURCE_BUILD.submodule,
+    assets: OFFICIAL_RELEASE.assets,
+    fromSource: true,
+  };
 
 function normalizePlatform(platform = os.platform()) {
   const value = String(platform).trim().toLowerCase();

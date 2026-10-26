@@ -10,3 +10,4 @@ src/c/target/
 /_build/
 /target/
 /src/c/target/
+/deps/

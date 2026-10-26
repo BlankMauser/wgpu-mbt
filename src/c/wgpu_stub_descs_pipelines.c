@@ -2935,8 +2935,9 @@ uint32_t mbt_wgpu_render_pass_desc_builder_set_depth_stencil_attachment_u32(
       .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
-      .stencilLoadOp = (WGPULoadOp)stencil_load_op_u32,
-      .stencilStoreOp = (WGPUStoreOp)stencil_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
   };
@@ -2984,8 +2985,9 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_depth_u32_new(
       .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
-      .stencilLoadOp = (WGPULoadOp)stencil_load_op_u32,
-      .stencilStoreOp = (WGPUStoreOp)stencil_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
   };
@@ -3169,8 +3171,9 @@ mbt_wgpu_render_pass_descriptor_color2_depth_u32_new(
       .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
-      .stencilLoadOp = (WGPULoadOp)stencil_load_op_u32,
-      .stencilStoreOp = (WGPUStoreOp)stencil_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
   };
@@ -3234,8 +3237,9 @@ mbt_wgpu_render_pass_descriptor_color2_depth_sparse_u32_new(
       .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
-      .stencilLoadOp = (WGPULoadOp)stencil_load_op_u32,
-      .stencilStoreOp = (WGPUStoreOp)stencil_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
   };
@@ -3446,8 +3450,9 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_color_depth_u32_new(
       .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
-      .stencilLoadOp = (WGPULoadOp)stencil_load_op_u32,
-      .stencilStoreOp = (WGPUStoreOp)stencil_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
   };
@@ -4099,8 +4104,9 @@ WGPURenderPassEncoder mbt_wgpu_command_encoder_begin_render_pass_color_depth(
       .depthStoreOp = WGPUStoreOp_Store,
       .depthClearValue = 1.0f,
       .depthReadOnly = 0u,
-      .stencilLoadOp = WGPULoadOp_Clear,
-      .stencilStoreOp = WGPUStoreOp_Store,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .stencilLoadOp = WGPULoadOp_Undefined,
+      .stencilStoreOp = WGPUStoreOp_Undefined,
       .stencilClearValue = 0u,
       .stencilReadOnly = 1u,
   };

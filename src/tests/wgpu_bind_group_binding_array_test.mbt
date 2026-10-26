@@ -224,6 +224,9 @@ test "wgpu bind group builder: sampler binding array renders with dynamic index"
   let arrays_bg = arrays_bgb.finish(device, arrays_bgl)
 
   let wgsl : String =
+    #|// wgpu 30 (naga 30): binding arrays need this WGSL enable extension.
+    #|enable wgpu_binding_array;
+    #|
     #|struct Slot {
     #|  index: u32,
     #|};
