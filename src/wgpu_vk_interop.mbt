@@ -1,7 +1,8 @@
 // Vulkan interop: adopt a VkInstance / VkDevice / VkQueue and VkImages owned
 // by another wgpu in the same process (e.g. a Rust host on the wgpu 30
-// crate). Needs the BlankMauser/wgpu-native fork (branch wgpu-30-vk-interop)
-// loaded dynamically (MBT_WGPU_LINK_MODE=dynamic); with a stock library every
+// crate). Needs the BlankMauser/wgpu-native fork (branch wgpu-30-vk-interop),
+// which this branch builds and links statically by default; with a stock
+// library (MBT_WGPU_NATIVE_SOURCE=official, or a dynamic v29 library) every
 // call raises WgpuNativeMissingSymbol and `has_vulkan_interop()` is false.
 //
 // Handoff protocol (the caller's job): serialise queue submissions with the

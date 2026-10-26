@@ -1,15 +1,17 @@
 const os = require('os');
 
 // Default (this fork, branch wgpu-30): build wgpu-native from source, from
-// the deps/wgpu-native submodule pinned below (BlankMauser/wgpu-native,
-// wgpu-core/wgpu-hal 30.0.1, the v29 webgpu.h C API). `tag` is a label for
+// the deps/wgpu-native submodule pinned below (BlankMauser/wgpu-native branch
+// wgpu-30-vk-interop: wgpu-core/wgpu-hal 30.0.1, the v29 webgpu.h C API plus
+// the Vulkan interop extension, wgpu_vk_interop.h). `tag` is a label for
 // the build (written into wgpu-native-meta/wgpu-native-git-tag of the cached
 // release-shaped tree), not a git tag. Needs Rust (cargo) on PATH.
 const SOURCE_BUILD = {
   repo: 'BlankMauser/wgpu-native',
-  tag: 'v30.0.1-lf.1+src.fa01034',
-  rev: 'fa01034943148094ef915e6895d69c7f905ddca7',
+  tag: 'v30.0.1-lf.1+vk.5a0c88b',
+  rev: '5a0c88bd3db8e172b4d5147e338c3c6c11bc5d5c',
   submodule: 'deps/wgpu-native',
+  vkInterop: true,
 };
 
 // MBT_WGPU_NATIVE_SOURCE=official: the upstream release download (wgpu 29).
@@ -162,7 +164,7 @@ const USE_OFFICIAL =
 // platform) either way; in source mode the sha256 fields are unused and the
 // pinned submodule commit is the identity instead.
 const SUPPORTED_RELEASE = USE_OFFICIAL
-  ? { ...OFFICIAL_RELEASE, fromSource: false }
+  ? { ...OFFICIAL_RELEASE, fromSource: false, vkInterop: false }
   : {
     repo: SOURCE_BUILD.repo,
     tag: SOURCE_BUILD.tag,
@@ -170,6 +172,7 @@ const SUPPORTED_RELEASE = USE_OFFICIAL
     submodule: SOURCE_BUILD.submodule,
     assets: OFFICIAL_RELEASE.assets,
     fromSource: true,
+    vkInterop: SOURCE_BUILD.vkInterop,
   };
 
 function normalizePlatform(platform = os.platform()) {

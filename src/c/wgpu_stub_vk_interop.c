@@ -2,11 +2,11 @@
 // wgpu-30-vk-interop): adopt a VkInstance/VkDevice/VkQueue and VkImages owned
 // by another wgpu (e.g. the Rust wgpu 30 crate) in the same process.
 //
-// Every entry point is looked up as an optional symbol, so a stock
-// wgpu-native (v29.0.1.1) still loads; the calls then return NULL / 0 and the
-// MoonBit side raises WgpuNativeMissingSymbol. In static link mode the
-// extension symbols are not in the static symbol table, so interop reports
-// unavailable there as well.
+// Every entry point is looked up as an optional symbol: in static mode from
+// the static symbol table (wgpu_dynload.c, present when the source build has
+// the extension: MBT_WGPU_STATIC_HAS_VK_INTEROP), in dynamic mode from the
+// loaded library. With a stock wgpu-native (v29.0.1.1, either mode) the calls
+// return NULL / 0 and the MoonBit side raises WgpuNativeMissingSymbol.
 
 #include "wgpu_stub.h"
 #include "wgpu_optional_sym.h"

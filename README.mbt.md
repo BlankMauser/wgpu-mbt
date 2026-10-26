@@ -2,15 +2,18 @@
 
 MoonBit bindings for the `wgpu-native` C API (WebGPU), targeting **native** backends.
 
-> **Fork note (BlankMauser/wgpu-mbt, branch `wgpu-30`).** This branch runs on
+> **Fork note (BlankMauser/wgpu-mbt, branch `vulkan-interop-30`, on `wgpu-30`).** This branch runs on
 > **wgpu 30.0.1** (wgpu-core/wgpu-hal 30.0.1) instead of upstream's wgpu 29. It
 > builds wgpu-native **from source**: the `deps/wgpu-native` submodule pins
 > [BlankMauser/wgpu-native](https://github.com/BlankMauser/wgpu-native) branch
-> `wgpu-30`, commit `fa01034943148094ef915e6895d69c7f905ddca7` (the v29
-> `webgpu.h`/`wgpu.h` C API, unchanged). The static-link prebuild hook checks
+> `wgpu-30-vk-interop`, commit `5a0c88bd3db8e172b4d5147e338c3c6c11bc5d5c` (the v29
+> `webgpu.h`/`wgpu.h` C API, unchanged, plus the Vulkan interop extension
+> `wgpu_vk_interop.h`, bound here as `Instance::from_vulkan`,
+> `Instance::adapter_from_vulkan`, `Adapter::device_from_vulkan`,
+> `Device::import_vulkan_image`, `CommandEncoder::transition_texture`). The static-link prebuild hook checks
 > the submodule is exactly at that commit and unmodified, runs
 > `cargo build --release` once, and caches a release-shaped tree under
-> `<cache>/wgpu-native/v30.0.1-lf.1+src.fa01034/` (cache: `MBT_WGPU_NATIVE_CACHE_DIR`,
+> `<cache>/wgpu-native/v30.0.1-lf.1+vk.5a0c88b/` (cache: `MBT_WGPU_NATIVE_CACHE_DIR`,
 > else `~/.cache/wgpu_mbt`). **Rust (cargo, 1.87 or newer: wgpu-core 30.0.1's rust-version) is required**, and the submodules must be
 > checked out (`git submodule update --init --recursive`). No downloads, no
 > environment variables needed. `MBT_WGPU_NATIVE_SOURCE=official` restores the

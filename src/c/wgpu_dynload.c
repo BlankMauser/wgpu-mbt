@@ -143,10 +143,42 @@ static void mbt_wgpu_die(const char *what) {
   abort();
 }
 
+#ifndef MBT_WGPU_STATIC_HAS_VK_INTEROP
+#define MBT_WGPU_STATIC_HAS_VK_INTEROP 0
+#endif
+
+#if MBT_WGPU_STATIC_HAS_VK_INTEROP
+// BlankMauser/wgpu-native Vulkan interop (wgpu_vk_interop.h). Only their
+// addresses are taken here; wgpu_stub_vk_interop.c calls them through the
+// matching function pointer types.
+extern void wgpuCreateInstanceFromVulkanExt(void);
+extern void wgpuInstanceCreateAdapterFromVulkanExt(void);
+extern void wgpuAdapterCreateDeviceFromVulkanExt(void);
+extern void wgpuDeviceImportVulkanImageExt(void);
+extern void wgpuCommandEncoderTransitionTextureExt(void);
+#endif
+
 static void *mbt_wgpu_static_known_sym(const char *name) {
   if (!name || !name[0]) {
     return NULL;
   }
+#if MBT_WGPU_STATIC_HAS_VK_INTEROP
+  if (strcmp(name, "wgpuCreateInstanceFromVulkanExt") == 0) {
+    return (void *)wgpuCreateInstanceFromVulkanExt;
+  }
+  if (strcmp(name, "wgpuInstanceCreateAdapterFromVulkanExt") == 0) {
+    return (void *)wgpuInstanceCreateAdapterFromVulkanExt;
+  }
+  if (strcmp(name, "wgpuAdapterCreateDeviceFromVulkanExt") == 0) {
+    return (void *)wgpuAdapterCreateDeviceFromVulkanExt;
+  }
+  if (strcmp(name, "wgpuDeviceImportVulkanImageExt") == 0) {
+    return (void *)wgpuDeviceImportVulkanImageExt;
+  }
+  if (strcmp(name, "wgpuCommandEncoderTransitionTextureExt") == 0) {
+    return (void *)wgpuCommandEncoderTransitionTextureExt;
+  }
+#endif
 
   if (strcmp(name, "wgpuCreateInstance") == 0) {
     return (void *)wgpuCreateInstance;
