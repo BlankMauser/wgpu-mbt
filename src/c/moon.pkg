@@ -14,6 +14,7 @@ options(
     "wgpu_stub_descs_instance.c",
     "wgpu_stub_descs_pipelines.c",
     "wgpu_stub_map.c",
+    "wgpu_stub_vk_interop.c",
   ],
   targets: {
     "raw.mbt": [ "native" ],
@@ -24,5 +25,6 @@ options(
     "raw_helpers.mbt": [ "native" ],
     "raw_instance.mbt": [ "native" ],
     "raw_surface.mbt": [ "native" ],
+    "raw_vk_interop.mbt": [ "native" ],
   },
 )
