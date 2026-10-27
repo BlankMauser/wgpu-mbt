@@ -320,6 +320,28 @@ pub extern "C" fn render_pipeline_desc_builder_set_color_target_write_mask(
 
 ///|
 #borrow(builder)
+pub extern "C" fn render_pipeline_desc_builder_set_color_target_blend_at(
+  builder : RenderPipelineDescBuilderObj,
+  index_u32 : UInt,
+  color_src_factor_u32 : UInt,
+  color_dst_factor_u32 : UInt,
+  color_operation_u32 : UInt,
+  alpha_src_factor_u32 : UInt,
+  alpha_dst_factor_u32 : UInt,
+  alpha_operation_u32 : UInt,
+) -> UInt = "mbt_wgpu_render_pipeline_desc_builder_set_color_target_blend_at"
+
+///|
+#borrow(builder, key)
+pub extern "C" fn render_pipeline_desc_builder_set_constant_utf8(
+  builder : RenderPipelineDescBuilderObj,
+  key : Bytes,
+  key_len : UInt64,
+  value : Double,
+) -> UInt = "mbt_wgpu_render_pipeline_desc_builder_set_constant_utf8"
+
+///|
+#borrow(builder)
 pub extern "C" fn render_pipeline_desc_builder_set_color_target_write_mask_at(
   builder : RenderPipelineDescBuilderObj,
   index_u32 : UInt,

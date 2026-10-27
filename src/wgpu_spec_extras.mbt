@@ -2847,6 +2847,14 @@ declare pub fn ComputePipelineDescBuilder::set_entry_point(
 
 ///|
 #declaration_only
+declare pub fn ComputePipelineDescBuilder::set_constant(
+  self : ComputePipelineDescBuilder,
+  key : String,
+  value : Double,
+) -> Unit raise ComputePipelineDescError
+
+///|
+#declaration_only
 declare pub fn ComputePipelineDescBuilder::finish_descriptor_ptr(
   self : ComputePipelineDescBuilder,
 ) -> @c.WGPUComputePipelineDescriptorPtr raise ComputePipelineDescError
@@ -3025,6 +3033,27 @@ declare pub fn RenderPipelineDescBuilder::set_color_target_write_mask_at(
   self : RenderPipelineDescBuilder,
   index_u32 : UInt,
   write_mask_u64 : UInt64,
+) -> Unit raise RenderPipelineDescError
+
+///|
+#declaration_only
+declare pub fn RenderPipelineDescBuilder::set_color_target_blend_at(
+  self : RenderPipelineDescBuilder,
+  index_u32 : UInt,
+  color_src_factor_u32 : UInt,
+  color_dst_factor_u32 : UInt,
+  color_operation_u32 : UInt,
+  alpha_src_factor_u32 : UInt,
+  alpha_dst_factor_u32 : UInt,
+  alpha_operation_u32 : UInt,
+) -> Unit raise RenderPipelineDescError
+
+///|
+#declaration_only
+declare pub fn RenderPipelineDescBuilder::set_constant(
+  self : RenderPipelineDescBuilder,
+  key : String,
+  value : Double,
 ) -> Unit raise RenderPipelineDescError
 
 ///|

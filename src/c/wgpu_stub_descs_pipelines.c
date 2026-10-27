@@ -1284,10 +1284,17 @@ void mbt_wgpu_render_bundle_descriptor_free(WGPURenderBundleDescriptor *desc) {
   free(desc);
 }
 
+#define MBT_WGPU_MAX_CONSTANTS 16u
+#define MBT_WGPU_MAX_CONSTANT_KEY 64u
+
 typedef struct {
   WGPUComputePipelineDescriptor desc;
   WGPUComputeState stage;
   char entry[64];
+  // Pipeline-overridable constants (WGSL `override`).
+  WGPUConstantEntry constants[MBT_WGPU_MAX_CONSTANTS];
+  char constant_keys[MBT_WGPU_MAX_CONSTANTS][MBT_WGPU_MAX_CONSTANT_KEY];
+  uint32_t constant_count;
   uint32_t last_error;
   uint32_t last_error_a;
   uint32_t last_error_b;
@@ -1427,6 +1434,7 @@ mbt_wgpu_compute_pipeline_descriptor_new(WGPUPipelineLayout layout,
     return NULL;
   }
   memset(out->entry, 0, sizeof(out->entry));
+  out->constant_count = 0u;
   out->stage = (WGPUComputeState){
       .nextInChain = NULL,
       .module = shader_module,
@@ -1582,6 +1590,56 @@ void mbt_wgpu_compute_pipeline_desc_builder_free(void *builder) {
       mbt_wgpu_compute_pipeline_desc_builder_handle(builder));
 }
 
+// Stores one constant entry (key copied); returns 0, 1 (too many) or 2 (key
+// empty or too long).
+static uint32_t mbt_wgpu_store_constant(WGPUConstantEntry *entries,
+                                        char (*keys)[MBT_WGPU_MAX_CONSTANT_KEY],
+                                        uint32_t *count, const uint8_t *key,
+                                        uint64_t key_len, double value) {
+  if (key_len == 0u || key_len >= MBT_WGPU_MAX_CONSTANT_KEY) {
+    return 2u;
+  }
+  for (uint32_t i = 0; i < *count; i++) {
+    if (entries[i].key.length == (size_t)key_len &&
+        memcmp(keys[i], key, (size_t)key_len) == 0) {
+      entries[i].value = value;
+      return 0u;
+    }
+  }
+  if (*count >= MBT_WGPU_MAX_CONSTANTS) {
+    return 1u;
+  }
+  uint32_t i = *count;
+  memset(keys[i], 0, MBT_WGPU_MAX_CONSTANT_KEY);
+  memcpy(keys[i], key, (size_t)key_len);
+  entries[i] = (WGPUConstantEntry){
+      .nextInChain = NULL,
+      .key = (WGPUStringView){.data = keys[i], .length = (size_t)key_len},
+      .value = value,
+  };
+  *count = i + 1u;
+  return 0u;
+}
+
+// Sets (or replaces) a pipeline-overridable constant. 0 on success.
+uint32_t mbt_wgpu_compute_pipeline_desc_builder_set_constant_utf8(
+    void *builder, const uint8_t *key, uint64_t key_len, double value) {
+  mbt_compute_pipeline_desc_t *desc =
+      mbt_wgpu_compute_pipeline_desc_builder_unwrap(builder);
+  if (!desc) {
+    return MBT_WGPU_CP_ERR_NULL_DESCRIPTOR;
+  }
+  uint32_t r = mbt_wgpu_store_constant(desc->constants, desc->constant_keys,
+                                       &desc->constant_count, key, key_len, value);
+  if (r != 0u) {
+    return 100u + r;
+  }
+  desc->stage.constantCount = (size_t)desc->constant_count;
+  desc->stage.constants = desc->constants;
+  desc->desc.compute = desc->stage;
+  return 0u;
+}
+
 #define MBT_WGPU_RP_MAX_ATTRS 16u
 #define MBT_WGPU_RP_MAX_VBUFS 4u
 #define MBT_WGPU_RP_MAX_TARGETS 4u
@@ -1615,6 +1673,13 @@ typedef struct {
   WGPUBlendState blend;
   WGPUBlendComponent blend_color;
   WGPUBlendComponent blend_alpha;
+  // Optional: a blend state per colour target (set_color_target_blend_at).
+  WGPUBlendState target_blends[MBT_WGPU_RP_MAX_TARGETS];
+
+  // Pipeline-overridable constants, for both stages (one module).
+  WGPUConstantEntry constants[MBT_WGPU_MAX_CONSTANTS];
+  char constant_keys[MBT_WGPU_MAX_CONSTANTS][MBT_WGPU_MAX_CONSTANT_KEY];
+  uint32_t constant_count;
 
   // Optional: depth.
   WGPUStencilFaceState stencil;
@@ -1669,6 +1734,7 @@ mbt_wgpu_render_pipeline_descriptor_rgba8_common_new(WGPUPipelineLayout layout,
   if (!out) {
     return NULL;
   }
+  out->constant_count = 0u;
 
   memcpy(out->vs_entry, "vs_main", 7);
   memcpy(out->fs_entry, "fs_main", 7);
@@ -2084,6 +2150,71 @@ uint32_t mbt_wgpu_render_pipeline_desc_builder_set_blend_components(
   for (uint32_t i = 0; i < n; i++) {
     out->color_targets[i].blend = &out->blend;
   }
+  return MBT_WGPU_RP_OK;
+}
+
+// The blend state of colour target `index` only.
+uint32_t mbt_wgpu_render_pipeline_desc_builder_set_color_target_blend_at(
+    void *builder, uint32_t index_u32, uint32_t color_src_factor_u32,
+    uint32_t color_dst_factor_u32, uint32_t color_operation_u32,
+    uint32_t alpha_src_factor_u32, uint32_t alpha_dst_factor_u32,
+    uint32_t alpha_operation_u32) {
+  if (!builder) {
+    return MBT_WGPU_RP_ERR_NULL_BUILDER;
+  }
+  mbt_render_pipeline_desc_t *out =
+      mbt_wgpu_render_pipeline_desc_builder_unwrap(builder);
+  if (!out) {
+    return MBT_WGPU_RP_ERR_NULL_BUILDER;
+  }
+  mbt_wgpu_rp_builder_clear_error(out);
+  uint32_t idx = index_u32;
+  if (idx >= out->color_target_count) {
+    return mbt_wgpu_rp_builder_set_error(out, MBT_WGPU_RP_ERR_COLOR_TARGET_INDEX_OOB, idx,
+                                         out->color_target_count);
+  }
+  out->target_blends[idx] = (WGPUBlendState){
+      .color =
+          (WGPUBlendComponent){
+              .operation = (WGPUBlendOperation)color_operation_u32,
+              .srcFactor = (WGPUBlendFactor)color_src_factor_u32,
+              .dstFactor = (WGPUBlendFactor)color_dst_factor_u32,
+          },
+      .alpha =
+          (WGPUBlendComponent){
+              .operation = (WGPUBlendOperation)alpha_operation_u32,
+              .srcFactor = (WGPUBlendFactor)alpha_src_factor_u32,
+              .dstFactor = (WGPUBlendFactor)alpha_dst_factor_u32,
+          },
+  };
+  out->color_targets[idx].blend = &out->target_blends[idx];
+  return MBT_WGPU_RP_OK;
+}
+
+// Sets (or replaces) a pipeline-overridable constant for both stages.
+uint32_t mbt_wgpu_render_pipeline_desc_builder_set_constant_utf8(
+    void *builder, const uint8_t *key, uint64_t key_len, double value) {
+  if (!builder) {
+    return MBT_WGPU_RP_ERR_NULL_BUILDER;
+  }
+  mbt_render_pipeline_desc_t *out =
+      mbt_wgpu_render_pipeline_desc_builder_unwrap(builder);
+  if (!out) {
+    return MBT_WGPU_RP_ERR_NULL_BUILDER;
+  }
+  mbt_wgpu_rp_builder_clear_error(out);
+  uint32_t r = mbt_wgpu_store_constant(out->constants, out->constant_keys,
+                                       &out->constant_count, key, key_len, value);
+  if (r != 0u) {
+    return mbt_wgpu_rp_builder_set_error(out, MBT_WGPU_RP_ERR_INTERNAL, 100u + r,
+                                         MBT_WGPU_MAX_CONSTANTS);
+  }
+  out->vertex.constantCount = (size_t)out->constant_count;
+  out->vertex.constants = out->constants;
+  out->desc.vertex.constantCount = out->vertex.constantCount;
+  out->desc.vertex.constants = out->constants;
+  out->fragment.constantCount = (size_t)out->constant_count;
+  out->fragment.constants = out->constants;
   return MBT_WGPU_RP_OK;
 }
 
