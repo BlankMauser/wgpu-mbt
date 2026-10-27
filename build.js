@@ -250,6 +250,7 @@ function buildEnvironment(env) {
       key === 'CARGO_ENCODED_RUSTFLAGS' ||
       key === 'RUSTC' ||
       key === 'RUSTC_WRAPPER' ||
+      key === 'RUSTUP_TOOLCHAIN' ||
       key === 'CARGO_BUILD_TARGET' ||
       key.startsWith('CARGO_TARGET_') && key !== 'CARGO_TARGET_DIR' ||
       key.startsWith('CARGO_PROFILE_')
@@ -382,6 +383,19 @@ function ensureSourceArtifact(asset) {
   });
 }
 
+// Recorded but not compared: debug-info-only settings (capped.sh sets
+// CARGO_PROFILE_RELEASE_DEBUG), which do not change the code, and
+// RUSTUP_TOOLCHAIN, whose effect the recorded `rustc -vV` already shows.
+function driftKey(record) {
+  const env = {};
+  for (const [key, value] of Object.entries(record.env || {})) {
+    if (key !== 'RUSTUP_TOOLCHAIN' && !/^CARGO_PROFILE_.+_(DEBUG|SPLIT_DEBUGINFO|STRIP)$/u.test(key)) {
+      env[key] = value;
+    }
+  }
+  return { rustc: record.rustc, env };
+}
+
 // The cache key is (label, source commit). A cached tree built with another
 // toolchain or build env is still used, with a warning.
 function warnOnEnvironmentDrift(metaDir) {
@@ -397,7 +411,7 @@ function warnOnEnvironmentDrift(metaDir) {
     return; // No rustc here: nothing to compare (and nothing to rebuild with).
   }
   const was = JSON.parse(fs.readFileSync(recorded, 'utf8'));
-  if (JSON.stringify(was) !== JSON.stringify(now)) {
+  if (JSON.stringify(driftKey(was)) !== JSON.stringify(driftKey(now))) {
     process.stderr.write(
       `wgpu_mbt: cached wgpu-native ${SUPPORTED_RELEASE.tag} was built with a different toolchain or build env; using it anyway (delete ${path.dirname(metaDir)} to rebuild).\n  was: ${JSON.stringify(was)}\n  now: ${JSON.stringify(now)}\n`,
     );
