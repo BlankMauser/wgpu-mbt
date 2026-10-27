@@ -1,0 +1,14 @@
+build.js
+  h_03360edcd9e88f 253,386-398,414
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d36b8196ce540768104c724583b78882753049dd",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
