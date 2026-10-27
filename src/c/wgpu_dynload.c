@@ -157,6 +157,7 @@ extern void wgpuAdapterCreateDeviceFromVulkanExt(void);
 extern void wgpuDeviceImportVulkanImageExt(void);
 extern void wgpuCommandEncoderTransitionTextureExt(void);
 extern void wgpuVulkanInteropLastErrorExt(void);
+extern void wgpuInstanceLiveObjectsExt(void);
 #endif
 
 static void *mbt_wgpu_static_known_sym(const char *name) {
@@ -181,6 +182,9 @@ static void *mbt_wgpu_static_known_sym(const char *name) {
   }
   if (strcmp(name, "wgpuVulkanInteropLastErrorExt") == 0) {
     return (void *)wgpuVulkanInteropLastErrorExt;
+  }
+  if (strcmp(name, "wgpuInstanceLiveObjectsExt") == 0) {
+    return (void *)wgpuInstanceLiveObjectsExt;
   }
 #endif
 

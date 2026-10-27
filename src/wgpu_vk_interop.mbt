@@ -346,3 +346,19 @@ pub fn VulkanQueueLock::lock(self : VulkanQueueLock) -> Unit {
 pub fn VulkanQueueLock::unlock(self : VulkanQueueLock) -> Unit {
   @c.vk_queue_lock_unlock(self.raw)
 }
+
+///|
+/// Objects users still hold on this instance's devices, in every registry
+/// except adapters, devices and queues (command encoders included), as
+/// "buffers=1, command_encoders=2"; empty when there are none. An adopter
+/// checks it before releasing an adopted device.
+pub fn Instance::live_objects(self : Instance) -> String raise WgpuError {
+  require_vulkan_interop()
+  let n = @c.vk_live_objects(self.raw, Bytes::make(0, b'\x00'), 0UL)
+  if n == 0UL {
+    return ""
+  }
+  let buf = Bytes::make(n.to_int(), b'\x00')
+  ignore(@c.vk_live_objects(self.raw, buf, n))
+  @utf8.decode_lossy(buf[:])
+}

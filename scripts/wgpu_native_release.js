@@ -8,8 +8,8 @@ const os = require('os');
 // release-shaped tree), not a git tag. Needs Rust (cargo) on PATH.
 const SOURCE_BUILD = {
   repo: 'BlankMauser/wgpu-native',
-  tag: 'v30.0.1-lf.1+vk.de59f1b',
-  rev: 'de59f1b4409401a3915df3d3a5a4442e095a8842',
+  tag: 'v30.0.1-lf.1+vk.554226d',
+  rev: '554226db17427f5610bbf2fcc2da59a3daacdec6',
   submodule: 'deps/wgpu-native',
   vkInterop: true,
 };

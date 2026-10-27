@@ -464,3 +464,30 @@ test "wgpu GlobalReport leak check (managed helper)" {
   report1.release()
   instance.release()
 }
+
+///|
+test "live objects: every registry, including unfinished encoders and query sets" {
+  run_on_supported_native_platform(() => {
+    if !@wgpu.has_vulkan_interop() {
+      return
+    }
+    let instance = @wgpu.Instance::create()
+    let adapter = instance.request_adapter_sync()
+    let device = adapter.request_device_sync(instance)
+    let before = instance.live_objects()
+    let buf = device.create_buffer(size=16UL, usage=bu(@wgpu.BUFFER_USAGE_COPY_DST))
+    let enc = device.create_command_encoder()
+    let qs = device.create_query_set_occlusion(1U)
+    let during = instance.live_objects()
+    qs.release()
+    enc.release()
+    buf.release()
+    let after = instance.live_objects()
+    @debug.debug_inspect(before, content="\"\"")
+    @debug.debug_inspect(during, content="\"command_encoders=1, query_sets=1, buffers=1\"")
+    @debug.debug_inspect(after, content="\"\"")
+    device.release()
+    adapter.release()
+    instance.release()
+  })
+}

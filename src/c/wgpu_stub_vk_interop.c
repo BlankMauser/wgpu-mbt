@@ -53,6 +53,7 @@ static const char *const MBT_VK_SYMS[] = {
     "wgpuDeviceImportVulkanImageExt",
     "wgpuCommandEncoderTransitionTextureExt",
     "wgpuVulkanInteropLastErrorExt",
+    "wgpuInstanceLiveObjectsExt",
 };
 
 int32_t mbt_wgpu_vk_interop_available(void) {
@@ -166,6 +167,15 @@ int32_t mbt_wgpu_vk_transition_texture(WGPUCommandEncoder encoder, WGPUTexture t
   pfn_transition f = (pfn_transition)mbt_wgpu_optional_sym(MBT_VK_SYMS[4]);
   if (!f || !encoder || !texture) return 0;
   return f(encoder, texture, (WGPUTextureUsage)state) ? 1 : 0;
+}
+
+typedef size_t (*pfn_live_objects)(WGPUInstance, char *, size_t);
+
+// wgpuInstanceLiveObjectsExt: length, and a copy when it fits.
+uint64_t mbt_wgpu_vk_live_objects(WGPUInstance instance, moonbit_bytes_t out, uint64_t capacity) {
+  pfn_live_objects f = (pfn_live_objects)mbt_wgpu_optional_sym(MBT_VK_SYMS[6]);
+  if (!f || !instance) return 0;
+  return (uint64_t)f(instance, (char *)out, (size_t)capacity);
 }
 
 // The last interop error of this thread: length, and a copy when it fits.

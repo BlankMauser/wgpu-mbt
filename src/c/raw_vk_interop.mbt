@@ -105,3 +105,7 @@ pub extern "C" fn vk_queue_lock_lock(q : UInt64) -> Unit = "mbt_wgpu_vk_queue_lo
 
 ///|
 pub extern "C" fn vk_queue_lock_unlock(q : UInt64) -> Unit = "mbt_wgpu_vk_queue_lock_unlock"
+
+///|
+#borrow(instance, out)
+pub extern "C" fn vk_live_objects(instance : Instance, out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_live_objects"

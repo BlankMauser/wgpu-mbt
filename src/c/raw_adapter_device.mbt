@@ -928,3 +928,39 @@ pub fn adapter_has_feature_native_spirv_shader_passthrough(
   let _ = adapter
   false
 }
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_query_sets_num_kept_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_query_sets_num_kept_from_user"
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_query_sets_num_released_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_query_sets_num_released_from_user"
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_render_bundles_num_kept_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_render_bundles_num_kept_from_user"
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_render_bundles_num_released_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_render_bundles_num_released_from_user"
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_pipeline_caches_num_kept_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_pipeline_caches_num_kept_from_user"
+
+///|
+#borrow(report)
+pub extern "C" fn global_report_hub_pipeline_caches_num_released_from_user(
+  report : WGPUGlobalReportPtr,
+) -> UInt64 = "mbt_wgpu_global_report_hub_pipeline_caches_num_released_from_user"

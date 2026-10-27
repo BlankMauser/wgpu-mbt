@@ -749,3 +749,45 @@ pub fn Instance::add_ref(self : Instance) -> Instance {
 pub fn Instance::raw_handle(self : Instance) -> @c.Instance {
   self.raw
 }
+
+///|
+pub fn GlobalReport::hub_query_sets_num_kept_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_query_sets_num_kept_from_user(self.raw)
+}
+
+///|
+pub fn GlobalReport::hub_query_sets_num_released_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_query_sets_num_released_from_user(self.raw)
+}
+
+///|
+pub fn GlobalReport::hub_render_bundles_num_kept_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_render_bundles_num_kept_from_user(self.raw)
+}
+
+///|
+pub fn GlobalReport::hub_render_bundles_num_released_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_render_bundles_num_released_from_user(self.raw)
+}
+
+///|
+pub fn GlobalReport::hub_pipeline_caches_num_kept_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_pipeline_caches_num_kept_from_user(self.raw)
+}
+
+///|
+pub fn GlobalReport::hub_pipeline_caches_num_released_from_user(
+  self : GlobalReport,
+) -> UInt64 {
+  @c.global_report_hub_pipeline_caches_num_released_from_user(self.raw)
+}
