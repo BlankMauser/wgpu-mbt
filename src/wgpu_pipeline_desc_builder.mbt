@@ -49,6 +49,27 @@ pub fn ComputePipelineDescBuilder::set_entry_point(
 }
 
 ///|
+/// Sets (or replaces) the pipeline-overridable constant `key` (a WGSL
+/// `override` name or id); at most 16 per pipeline.
+pub fn ComputePipelineDescBuilder::set_constant(
+  self : ComputePipelineDescBuilder,
+  key : String,
+  value : Double,
+) -> Unit raise ComputePipelineDescError {
+  let key_bytes = utf8_bytes(key)
+  let err = @c.compute_pipeline_desc_builder_set_constant_utf8(
+    self.raw,
+    key_bytes,
+    key_bytes.length().to_uint64(),
+    value,
+  )
+  if err != 0U {
+    raise ComputePipelineDescError(err, 0U, 0U)
+  }
+  ()
+}
+
+///|
 pub fn ComputePipelineDescBuilder::finish_descriptor_ptr(
   self : ComputePipelineDescBuilder,
 ) -> @c.WGPUComputePipelineDescriptorPtr raise ComputePipelineDescError {
@@ -275,6 +296,57 @@ pub fn RenderPipelineDescBuilder::set_blend_components(
     alpha_src_factor_u32,
     alpha_dst_factor_u32,
     alpha_operation_u32,
+  )
+  if err != 0U {
+    raise self.last_error()
+  }
+  ()
+}
+
+///|
+/// The blend state of colour target `index_u32` only (`set_blend_components`
+/// sets every target's). Factors and operations are `BLEND_FACTOR_*` and
+/// `BLEND_OPERATION_*`.
+pub fn RenderPipelineDescBuilder::set_color_target_blend_at(
+  self : RenderPipelineDescBuilder,
+  index_u32 : UInt,
+  color_src_factor_u32 : UInt,
+  color_dst_factor_u32 : UInt,
+  color_operation_u32 : UInt,
+  alpha_src_factor_u32 : UInt,
+  alpha_dst_factor_u32 : UInt,
+  alpha_operation_u32 : UInt,
+) -> Unit raise RenderPipelineDescError {
+  let err = @c.render_pipeline_desc_builder_set_color_target_blend_at(
+    self.raw,
+    index_u32,
+    color_src_factor_u32,
+    color_dst_factor_u32,
+    color_operation_u32,
+    alpha_src_factor_u32,
+    alpha_dst_factor_u32,
+    alpha_operation_u32,
+  )
+  if err != 0U {
+    raise self.last_error()
+  }
+  ()
+}
+
+///|
+/// Sets (or replaces) the pipeline-overridable constant `key` (a WGSL
+/// `override` name or id) for both stages; at most 16 per pipeline.
+pub fn RenderPipelineDescBuilder::set_constant(
+  self : RenderPipelineDescBuilder,
+  key : String,
+  value : Double,
+) -> Unit raise RenderPipelineDescError {
+  let key_bytes = utf8_bytes(key)
+  let err = @c.render_pipeline_desc_builder_set_constant_utf8(
+    self.raw,
+    key_bytes,
+    key_bytes.length().to_uint64(),
+    value,
   )
   if err != 0U {
     raise self.last_error()
