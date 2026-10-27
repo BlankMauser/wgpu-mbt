@@ -1,0 +1,28 @@
+.gitmodules
+  h_03360edcd9e88f 1-4
+.moonignore
+  h_03360edcd9e88f 13
+README.mbt.md
+  h_03360edcd9e88f 5-29
+build.js
+  h_03360edcd9e88f 172-269,275-277
+deps/wgpu-native
+  h_03360edcd9e88f 1
+scripts/wgpu_native_release.js
+  h_03360edcd9e88f 3-16,158-174
+src/c/wgpu_stub_descs_pipelines.c
+  h_03360edcd9e88f 2938-2940,2988-2990,3174-3176,3240-3242,3453-3455,4107-4109
+src/tests/wgpu_bind_group_binding_array_test.mbt
+  h_03360edcd9e88f 227-229
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "02f07557e1e50a5881dba39379379660f512c1e5",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}

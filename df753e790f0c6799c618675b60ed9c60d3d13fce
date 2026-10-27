@@ -1,0 +1,18 @@
+src/c/raw_vk_interop.mbt
+  h_03360edcd9e88f 95,98-101
+src/c/wgpu_stub_vk_interop.c
+  h_03360edcd9e88f 236-246,248-254,257-264
+src/wgpu_vk_interop.mbt
+  h_03360edcd9e88f 210-211,302-322,326-327
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "df753e790f0c6799c618675b60ed9c60d3d13fce",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}

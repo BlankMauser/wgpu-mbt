@@ -1,0 +1,19 @@
+deps/wgpu-native
+  s_ce504a2d565581::t_0c06596e78dae3 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "18376bf3607d8e5927e70b1244877b5773d58aa4",
+  "prompts": {},
+  "sessions": {
+    "s_ce504a2d565581": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17a15-84b2-7920-9e8f-08447b61b78a",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
