@@ -92,7 +92,10 @@ pub extern "C" fn vk_handoff_u64(p : UInt64, field : Int) -> UInt64 = "mbt_wgpu_
 pub extern "C" fn vk_handoff_names(p : UInt64, which : Int, out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_names"
 
 ///|
-pub extern "C" fn vk_handoff_lock(p : UInt64) -> Unit = "mbt_wgpu_vk_handoff_lock"
+pub extern "C" fn vk_handoff_queue_lock(p : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_queue_lock"
 
 ///|
-pub extern "C" fn vk_handoff_unlock(p : UInt64) -> Unit = "mbt_wgpu_vk_handoff_unlock"
+pub extern "C" fn vk_queue_lock_lock(q : UInt64) -> Unit = "mbt_wgpu_vk_queue_lock_lock"
+
+///|
+pub extern "C" fn vk_queue_lock_unlock(q : UInt64) -> Unit = "mbt_wgpu_vk_queue_lock_unlock"

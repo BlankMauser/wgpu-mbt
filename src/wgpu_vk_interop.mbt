@@ -207,8 +207,8 @@ pub fn CommandEncoder::transition_texture(
 /// A `WGPUVulkanHandoffExt` the owner built from its own objects (Rust:
 /// wgpu-native's crates/wgpu-vk-handoff): device handles, the shared image
 /// with its size, format, usage and handoff state, and the owner's queue
-/// lock. Read through the pointer, which stays valid while the owner keeps
-/// the handoff alive.
+/// lock. Read through the pointer, which must stay valid while it is read
+/// (adoption and import); the lock is copied out (`queue_lock`).
 pub struct VulkanHandoff {
   raw : UInt64
 }
@@ -299,12 +299,30 @@ pub fn VulkanHandoff::has_lock(self : VulkanHandoff) -> Bool {
 }
 
 ///|
-/// Takes the owner's queue lock (no-op without one).
-pub fn VulkanHandoff::lock(self : VulkanHandoff) -> Unit {
-  @c.vk_handoff_lock(self.raw)
+/// The owner's queue lock, copied out of the handoff (the owner may free or
+/// rebuild the handoff afterwards, e.g. on a resize, while the copy stays
+/// usable). None when the owner exported no lock.
+pub fn VulkanHandoff::queue_lock(self : VulkanHandoff) -> VulkanQueueLock? {
+  let q = @c.vk_handoff_queue_lock(self.raw)
+  if q == 0UL {
+    None
+  } else {
+    Some({ raw: q })
+  }
 }
 
 ///|
-pub fn VulkanHandoff::unlock(self : VulkanHandoff) -> Unit {
-  @c.vk_handoff_unlock(self.raw)
+/// The owner's lock for the shared queue (see `VulkanHandoff::queue_lock`).
+pub struct VulkanQueueLock {
+  raw : UInt64
+}
+
+///|
+pub fn VulkanQueueLock::lock(self : VulkanQueueLock) -> Unit {
+  @c.vk_queue_lock_lock(self.raw)
+}
+
+///|
+pub fn VulkanQueueLock::unlock(self : VulkanQueueLock) -> Unit {
+  @c.vk_queue_lock_unlock(self.raw)
 }

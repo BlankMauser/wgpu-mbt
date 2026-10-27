@@ -233,12 +233,33 @@ uint64_t mbt_wgpu_vk_handoff_names(uint64_t p, int32_t which, moonbit_bytes_t ou
   return n;
 }
 
-void mbt_wgpu_vk_handoff_lock(uint64_t p) {
+// A copy of the owner's lock (functions + context), independent of the
+// handoff struct's lifetime: the owner may free or rebuild the handoff (a
+// resize) while the adopted device keeps using its lock. 0 without a lock.
+// Lives for the program (24 bytes per adoption).
+typedef struct mbt_vk_queue_lock {
+  void (*lock)(void *);
+  void (*unlock)(void *);
+  void *context;
+} mbt_vk_queue_lock;
+
+uint64_t mbt_wgpu_vk_handoff_queue_lock(uint64_t p) {
   const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
-  if (h->lock) h->lock(h->lockContext);
+  if (!h->lock || !h->unlock) return 0;
+  mbt_vk_queue_lock *q = (mbt_vk_queue_lock *)malloc(sizeof(mbt_vk_queue_lock));
+  if (!q) return 0;
+  q->lock = h->lock;
+  q->unlock = h->unlock;
+  q->context = h->lockContext;
+  return (uint64_t)(uintptr_t)q;
 }
 
-void mbt_wgpu_vk_handoff_unlock(uint64_t p) {
-  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
-  if (h->unlock) h->unlock(h->lockContext);
+void mbt_wgpu_vk_queue_lock_lock(uint64_t q) {
+  mbt_vk_queue_lock *l = (mbt_vk_queue_lock *)(uintptr_t)q;
+  l->lock(l->context);
+}
+
+void mbt_wgpu_vk_queue_lock_unlock(uint64_t q) {
+  mbt_vk_queue_lock *l = (mbt_vk_queue_lock *)(uintptr_t)q;
+  l->unlock(l->context);
 }
