@@ -568,6 +568,15 @@ pub extern "C" fn compute_pipeline_desc_builder_set_entry_point_utf8(
 ) -> UInt = "mbt_wgpu_compute_pipeline_desc_builder_set_entry_point_utf8"
 
 ///|
+#borrow(builder, key)
+pub extern "C" fn compute_pipeline_desc_builder_set_constant_utf8(
+  builder : ComputePipelineDescBuilderObj,
+  key : Bytes,
+  key_len : UInt64,
+  value : Double,
+) -> UInt = "mbt_wgpu_compute_pipeline_desc_builder_set_constant_utf8"
+
+///|
 #borrow(builder)
 pub extern "C" fn compute_pipeline_desc_builder_last_error_u32(
   builder : ComputePipelineDescBuilderObj,
