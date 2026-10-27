@@ -26,5 +26,9 @@ options(
     "raw_instance.mbt": [ "native" ],
     "raw_surface.mbt": [ "native" ],
     "raw_vk_interop.mbt": [ "native" ],
+    "desc_builders.mbt": [ "native" ],
+    "handle_aliases.mbt": [ "native" ],
+    "webgpu_capi.mbt": [ "native" ],
+    "webgpu_capi_spec.mbt": [ "native" ],
   },
 )

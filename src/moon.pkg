@@ -8,6 +8,22 @@ import {
 
 options(
   targets: {
+    "wgpu_compute_pipeline_desc_error_wbtest.mbt": [ "native" ],
+    "wgpu_queue_work_done_error_wbtest.mbt": [ "native" ],
+    "wgpu_queue_work_done_wait_error_wbtest.mbt": [ "native" ],
+    "wgpu_render_pass_desc_builder.mbt": [ "native" ],
+    "wgpu_runtime_support_wbtest.mbt": [ "native" ],
+    "wgpu_rust_features.mbt": [ "native" ],
+    "wgpu_spec.mbt": [ "native" ],
+    "wgpu_spec_core.mbt": [ "native" ],
+    "wgpu_spec_extras.mbt": [ "native" ],
+    "wgpu_spec_handles.mbt": [ "native" ],
+    "wgpu_surface_configure_present_error_wbtest.mbt": [ "native" ],
+    "wgpu_surface_error_wbtest.mbt": [ "native" ],
+    "wgpu_surface_frame_wbtest.mbt": [ "native" ],
+    "wgpu_surface_platform_ctor_wbtest.mbt": [ "native" ],
+    "wgpu_wait_any_error_wbtest.mbt": [ "native" ],
+    "wgpu_windowing_wbtest.mbt": [ "native" ],
     "consts.mbt": [ "native" ],
     "wgpu.mbt": [ "native" ],
     "wgpu_adapter.mbt": [ "native" ],
