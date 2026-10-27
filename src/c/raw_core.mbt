@@ -174,3 +174,6 @@ fn align_up_u32(value : UInt, align : UInt) -> UInt {
     value + (align - rem)
   }
 }
+
+///|
+pub extern "C" fn has_load_op_dont_care() -> Bool = "mbt_wgpu_has_load_op_dont_care"

@@ -277,3 +277,10 @@ fn pick_first_supported_texture_format(
     xs[0]
   }
 }
+
+///|
+/// The linked wgpu-native understands `LOAD_OP_DONT_CARE`; otherwise it is
+/// passed as `LOAD_OP_CLEAR`.
+pub fn has_load_op_dont_care() -> Bool {
+  native_ready() && @c.has_load_op_dont_care()
+}

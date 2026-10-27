@@ -6,14 +6,14 @@ MoonBit bindings for the `wgpu-native` C API (WebGPU), targeting **native** back
 > **wgpu 30.0.1** (wgpu-core/wgpu-hal 30.0.1) instead of upstream's wgpu 29. It
 > builds wgpu-native **from source**: the `deps/wgpu-native` submodule pins
 > [BlankMauser/wgpu-native](https://github.com/BlankMauser/wgpu-native) branch
-> `wgpu-30-vk-interop`, commit `554226db17427f5610bbf2fcc2da59a3daacdec6` (the v29
+> `wgpu-30-vk-interop`, commit `cbb2f8b9fe35798299ef3d3c5e5b1050a8762b69` (the v29
 > `webgpu.h`/`wgpu.h` C API, unchanged, plus the Vulkan interop extension
 > `wgpu_vk_interop.h`, bound here as `Instance::from_vulkan`,
 > `Instance::adapter_from_vulkan`, `Adapter::device_from_vulkan`,
 > `Device::import_vulkan_image`, `CommandEncoder::transition_texture`). The static-link prebuild hook checks
 > the submodule is exactly at that commit and unmodified, runs
 > `cargo build --release` once, and caches a release-shaped tree under
-> `<cache>/wgpu-native/v30.0.1-lf.1+vk.554226d/` (cache: `MBT_WGPU_NATIVE_CACHE_DIR`,
+> `<cache>/wgpu-native/v30.0.1-lf.1+vk.cbb2f8b/` (cache: `MBT_WGPU_NATIVE_CACHE_DIR`,
 > else `~/.cache/wgpu_mbt`). **Rust (cargo, 1.87 or newer: wgpu-core 30.0.1's rust-version) is required**, and the submodules must be
 > checked out (`git submodule update --init --recursive`). No downloads, no
 > environment variables needed. `MBT_WGPU_NATIVE_SOURCE=official` restores the
@@ -34,6 +34,13 @@ MoonBit bindings for the `wgpu-native` C API (WebGPU), targeting **native** back
 > Without Rust: point `MBT_WGPU_NATIVE_ROOT` at an extracted release-shaped
 > tree (`lib/`, `include/webgpu/`, `wgpu-native-meta/wgpu-native-git-tag`
 > holding the label above), e.g. a copy of a cache entry built elsewhere.
+>
+> `LOAD_OP_DONT_CARE` (this fork): wgpu's `LoadOp::DontCare` for colour and
+> depth/stencil attachments (contents undefined at the start of the pass; the
+> pass must write every pixel before reading or storing it). With a stock
+> wgpu-native (`MBT_WGPU_NATIVE_SOURCE=official`, or a dynamic v29 library) it
+> falls back to `LOAD_OP_CLEAR`, a valid choice for undefined contents;
+> `has_load_op_dont_care()` tells which.
 >
 > Behaviour changes that come with wgpu 30 (the C ABI is the same, validation
 > and WGSL are stricter):

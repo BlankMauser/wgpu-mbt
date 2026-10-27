@@ -356,6 +356,11 @@ pub fn Instance::live_objects(self : Instance) -> String raise WgpuError {
   require_vulkan_interop()
   let n = @c.vk_live_objects(self.raw, Bytes::make(0, b'\x00'), 0UL)
   if n == 0UL {
+    // 0 is also what an internal error returns; the interop last error
+    // (cleared on entry, set on failure) tells them apart.
+    if @c.vk_last_error(Bytes::make(0, b'\x00'), 0UL) != 0UL {
+      raise interop_error("wgpuInstanceLiveObjectsExt")
+    }
     return ""
   }
   let buf = Bytes::make(n.to_int(), b'\x00')

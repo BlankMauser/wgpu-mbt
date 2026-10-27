@@ -13,6 +13,26 @@
 // limitations under the License.
 
 #include "wgpu_stub.h"
+#include "wgpu_optional_sym.h"
+
+// WGPUNativeLoadOp_DontCare (BlankMauser/wgpu-native fork) where the linked
+// wgpu-native understands it (it exports wgpuNativeLoadOpDontCare); a stock
+// wgpu-native gets Clear instead, a valid choice for undefined contents (a
+// stock one would abort on the unknown value).
+#define MBT_WGPU_LOAD_OP_DONT_CARE 0x00030001u
+static WGPULoadOp mbt_wgpu_load_op(uint32_t op) {
+  if (op == MBT_WGPU_LOAD_OP_DONT_CARE) {
+    static int supported = -1;
+    if (supported < 0) supported = mbt_wgpu_optional_sym("wgpuNativeLoadOpDontCare") != NULL;
+    return supported ? (WGPULoadOp)op : WGPULoadOp_Clear;
+  }
+  return (WGPULoadOp)op;
+}
+
+int32_t mbt_wgpu_has_load_op_dont_care(void) {
+  return mbt_wgpu_optional_sym("wgpuNativeLoadOpDontCare") != NULL;
+}
+
 
 WGPUBufferDescriptor *mbt_wgpu_buffer_descriptor_new(uint64_t size, uint64_t usage,
                                                     int32_t mapped_at_creation) {
@@ -2885,7 +2905,7 @@ uint32_t mbt_wgpu_render_pass_desc_builder_set_color_attachment_u32(
     return err;
   }
   out->colors[index].view = view;
-  out->colors[index].loadOp = (WGPULoadOp)load_op_u32;
+  out->colors[index].loadOp = mbt_wgpu_load_op(load_op_u32);
   out->colors[index].storeOp = (WGPUStoreOp)store_op_u32;
   out->colors[index].clearValue = (WGPUColor){
       .r = clear_r_f32,
@@ -2932,12 +2952,12 @@ uint32_t mbt_wgpu_render_pass_desc_builder_set_depth_stencil_attachment_u32(
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(depth_load_op_u32),
       .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(stencil_load_op_u32),
       .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
@@ -2983,12 +3003,12 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_depth_u32_new(
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(depth_load_op_u32),
       .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(stencil_load_op_u32),
       .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
@@ -3148,7 +3168,7 @@ mbt_wgpu_render_pass_descriptor_color2_depth_u32_new(
       .view = color0_view,
       .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
       .resolveTarget = NULL,
-      .loadOp = (WGPULoadOp)color0_load_op_u32,
+      .loadOp = mbt_wgpu_load_op(color0_load_op_u32),
       .storeOp = (WGPUStoreOp)color0_store_op_u32,
       .clearValue = (WGPUColor){.r = color0_clear_r_f32,
                                 .g = color0_clear_g_f32,
@@ -3160,7 +3180,7 @@ mbt_wgpu_render_pass_descriptor_color2_depth_u32_new(
       .view = color1_view,
       .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
       .resolveTarget = NULL,
-      .loadOp = (WGPULoadOp)color1_load_op_u32,
+      .loadOp = mbt_wgpu_load_op(color1_load_op_u32),
       .storeOp = (WGPUStoreOp)color1_store_op_u32,
       .clearValue = (WGPUColor){.r = color1_clear_r_f32,
                                 .g = color1_clear_g_f32,
@@ -3170,12 +3190,12 @@ mbt_wgpu_render_pass_descriptor_color2_depth_u32_new(
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(depth_load_op_u32),
       .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(stencil_load_op_u32),
       .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
@@ -3215,7 +3235,7 @@ mbt_wgpu_render_pass_descriptor_color2_depth_sparse_u32_new(
       .view = color0_view,
       .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
       .resolveTarget = NULL,
-      .loadOp = (WGPULoadOp)color0_load_op_u32,
+      .loadOp = mbt_wgpu_load_op(color0_load_op_u32),
       .storeOp = (WGPUStoreOp)color0_store_op_u32,
       .clearValue = (WGPUColor){.r = color0_clear_r_f32,
                                 .g = color0_clear_g_f32,
@@ -3227,7 +3247,7 @@ mbt_wgpu_render_pass_descriptor_color2_depth_sparse_u32_new(
       .view = color1_view,
       .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
       .resolveTarget = NULL,
-      .loadOp = (WGPULoadOp)color1_load_op_u32,
+      .loadOp = mbt_wgpu_load_op(color1_load_op_u32),
       .storeOp = (WGPUStoreOp)color1_store_op_u32,
       .clearValue = (WGPUColor){.r = color1_clear_r_f32,
                                 .g = color1_clear_g_f32,
@@ -3237,12 +3257,12 @@ mbt_wgpu_render_pass_descriptor_color2_depth_sparse_u32_new(
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(depth_load_op_u32),
       .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(stencil_load_op_u32),
       .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,
@@ -3441,7 +3461,7 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_color_depth_u32_new(
       .view = color_view,
       .depthSlice = WGPU_DEPTH_SLICE_UNDEFINED,
       .resolveTarget = NULL,
-      .loadOp = (WGPULoadOp)color_load_op_u32,
+      .loadOp = mbt_wgpu_load_op(color_load_op_u32),
       .storeOp = (WGPUStoreOp)color_store_op_u32,
       .clearValue = (WGPUColor){.r = color_clear_r_f32,
                                 .g = color_clear_g_f32,
@@ -3451,12 +3471,12 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_color_depth_u32_new(
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(depth_load_op_u32),
       .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
-      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)stencil_load_op_u32,
+      .stencilLoadOp = stencil_read_only ? WGPULoadOp_Undefined : mbt_wgpu_load_op(stencil_load_op_u32),
       .stencilStoreOp = stencil_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)stencil_store_op_u32,
       .stencilClearValue = stencil_clear_value_u32,
       .stencilReadOnly = stencil_read_only ? 1u : 0u,

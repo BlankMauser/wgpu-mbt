@@ -93,6 +93,8 @@ function stubCcFlags({ staticLink, asset }) {
     flags.push(`-DMBT_WGPU_STATIC_ARCHIVE=\\\"${escapeDefineString(asset.archive)}\\\"`);
     // The static archive defines the Vulkan interop entry points (fork only).
     flags.push(`-DMBT_WGPU_STATIC_HAS_VK_INTEROP=${SUPPORTED_RELEASE.vkInterop ? '1' : '0'}`);
+    // The static archive understands WGPUNativeLoadOp_DontCare (fork only).
+    flags.push(`-DMBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE=${SUPPORTED_RELEASE.loadOpDontCare ? '1' : '0'}`);
   } else {
     flags.push('-DMBT_WGPU_STATIC_HAS_PIPELINE_ASYNC=0');
     flags.push('-DMBT_WGPU_STATIC_HAS_COMPILATION_INFO=0');

@@ -146,6 +146,12 @@ static void mbt_wgpu_die(const char *what) {
 #ifndef MBT_WGPU_STATIC_HAS_VK_INTEROP
 #define MBT_WGPU_STATIC_HAS_VK_INTEROP 0
 #endif
+#ifndef MBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE
+#define MBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE 0
+#endif
+#if MBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE
+extern void wgpuNativeLoadOpDontCare(void);
+#endif
 
 #if MBT_WGPU_STATIC_HAS_VK_INTEROP
 // BlankMauser/wgpu-native Vulkan interop (wgpu_vk_interop.h). Only their
@@ -164,6 +170,11 @@ static void *mbt_wgpu_static_known_sym(const char *name) {
   if (!name || !name[0]) {
     return NULL;
   }
+#if MBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE
+  if (strcmp(name, "wgpuNativeLoadOpDontCare") == 0) {
+    return (void *)wgpuNativeLoadOpDontCare;
+  }
+#endif
 #if MBT_WGPU_STATIC_HAS_VK_INTEROP
   if (strcmp(name, "wgpuCreateInstanceFromVulkanExt") == 0) {
     return (void *)wgpuCreateInstanceFromVulkanExt;

@@ -1994,3 +1994,11 @@ pub const WHOLE_MAP_SIZE : UInt64 = 0xFFFFFFFFFFFFFFFFUL
 
 ///|
 pub const WHOLE_SIZE : UInt64 = 0xFFFFFFFFFFFFFFFFUL
+
+///|
+/// wgpu's `LoadOp::DontCare` (BlankMauser/wgpu-native fork,
+/// `WGPUNativeLoadOp_DontCare`): the attachment's contents are undefined at
+/// the start of the render pass; the pass must write every pixel before it
+/// reads (or blends) or stores it. Accepted wherever a load op is. With a
+/// stock wgpu-native it becomes `LOAD_OP_CLEAR` (see `has_load_op_dont_care`).
+pub const LOAD_OP_DONT_CARE : UInt = 0x00030001U
