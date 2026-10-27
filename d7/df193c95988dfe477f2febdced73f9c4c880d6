@@ -1,0 +1,34 @@
+README.mbt.md
+  h_03360edcd9e88f 9,16,38-44
+build.js
+  h_03360edcd9e88f 96-97
+deps/wgpu-native
+  h_03360edcd9e88f 1
+scripts/wgpu_native_release.js
+  h_03360edcd9e88f 11-12,15,168,177
+src/c/raw_core.mbt
+  h_03360edcd9e88f 177-179
+src/c/wgpu_dynload.c
+  h_03360edcd9e88f 149-154,173-177
+src/c/wgpu_stub_descs_pipelines.c
+  h_03360edcd9e88f 16-35,2908,2955,2960,3006,3011,3171,3183,3193,3198,3238,3250,3260,3265,3464,3474,3479
+src/consts.mbt
+  h_03360edcd9e88f 1997-2004
+src/tests/wgpu_render_load_op_dont_care_test.mbt
+  h_03360edcd9e88f 1-54
+src/wgpu_runtime.mbt
+  h_03360edcd9e88f 280-286
+src/wgpu_vk_interop.mbt
+  h_03360edcd9e88f 359-363
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7df193c95988dfe477f2febdced73f9c4c880d6",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
