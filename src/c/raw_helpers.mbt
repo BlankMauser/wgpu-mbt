@@ -1721,6 +1721,27 @@ pub extern "C" fn buffer_destroy(buffer : Buffer) -> Unit = "mbt_wgpu_buffer_des
 pub extern "C" fn buffer_release(buffer : Buffer) -> Unit = "mbt_wgpu_buffer_release_tracked"
 
 ///|
+/// The first half of `buffer_map_read_sync` (wgpuBufferMapAsync).
+pub extern "C" fn buffer_map_read_begin(
+  buffer : Buffer,
+  offset : UInt64,
+  size : UInt64,
+) -> OpaquePtr = "mbt_wgpu_buffer_map_read_begin"
+
+///|
+/// The second half: waits, copies, frees `pending`. Exactly once per begin.
+#borrow(out)
+pub extern "C" fn buffer_map_read_finish(
+  instance : Instance,
+  pending : OpaquePtr,
+  buffer : Buffer,
+  offset : UInt64,
+  size : UInt64,
+  out : Bytes,
+  out_len : UInt64,
+) -> Bool = "mbt_wgpu_buffer_map_read_finish"
+
+///|
 #borrow(out)
 pub extern "C" fn buffer_map_read_sync(
   instance : Instance,

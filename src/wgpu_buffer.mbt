@@ -181,6 +181,83 @@ pub fn Buffer::map_read_sync_or_raise(
 }
 
 ///|
+/// A read mapping started by `Buffer::map_read_begin`; `finish` it exactly
+/// once.
+pub struct PendingMapRead {
+  priv raw : @c.OpaquePtr
+  priv buffer : Buffer
+  priv offset : UInt64
+  priv size : UInt64
+  priv prefix : UInt64
+  priv want : UInt64
+  priv mut finished : Bool
+}
+
+///|
+/// `map_read_sync_or_raise` in two steps, for a queue shared with another
+/// submitter: this step calls map_async, which (wgpu 30) may submit the
+/// buffer's pending `write_buffer` data, so run it under the queue's lock;
+/// `PendingMapRead::finish` waits for the GPU and copies, and needs no lock.
+pub fn Buffer::map_read_begin(
+  self : Buffer,
+  offset : UInt64,
+  size : UInt64,
+) -> PendingMapRead raise BufferSyncError {
+  let buf_size = self.size()
+  if offset + size > buf_size {
+    raise BufferSyncOutOfBounds(offset, size, buf_size)
+  }
+  let aligned_offset = offset - offset % 8UL
+  let prefix = offset - aligned_offset
+  let aligned_size = align_up(prefix + size, 4UL)
+  if aligned_offset + aligned_size > buf_size {
+    raise BufferSyncAlignedOutOfBounds(
+      offset, size, aligned_offset, aligned_size, buf_size,
+    )
+  }
+  let raw = @c.buffer_map_read_begin(self.raw, aligned_offset, aligned_size)
+  if @c.opaque_ptr_is_null(raw) {
+    raise BufferSyncFailed("buffer_map_read_begin")
+  }
+  {
+    raw,
+    buffer: self,
+    offset: aligned_offset,
+    size: aligned_size,
+    prefix,
+    want: size,
+    finished: false,
+  }
+}
+
+///|
+/// Waits for the mapping (no queue operation) and returns the bytes; the
+/// buffer stays mapped, as after `map_read_sync_or_raise`.
+pub fn PendingMapRead::finish(
+  self : PendingMapRead,
+  instance : Instance,
+) -> Bytes raise BufferSyncError {
+  if self.finished {
+    raise BufferSyncFailed("buffer_map_read_finish: finished twice")
+  }
+  self.finished = true
+  let out = Bytes::new(self.size.to_int())
+  let ok = @c.buffer_map_read_finish(
+    instance.raw,
+    self.raw,
+    self.buffer.raw,
+    self.offset,
+    self.size,
+    out,
+    self.size,
+  )
+  if !ok {
+    raise BufferSyncFailed("buffer_map_read_finish")
+  }
+  out[:][self.prefix.to_int():(self.prefix + self.want).to_int()].to_owned()
+}
+
+///|
 pub fn Buffer::map_write_sync(
   self : Buffer,
   instance : Instance,

@@ -199,6 +199,47 @@ int32_t mbt_wgpu_buffer_map_read_sync(WGPUInstance instance, WGPUBuffer buffer,
   return true;
 }
 
+// map_read_sync in two steps. begin calls wgpuBufferMapAsync, which (wgpu 30)
+// may submit the buffer's pending write_buffer data: a queue operation, which
+// a shared VkQueue's owner lock must cover. finish waits for the mapping
+// (wgpuInstanceProcessEvents, no queue operation) and copies; it must be
+// called exactly once per begin (it frees the pending state).
+typedef struct mbt_pending_map_read {
+  mbt_map_result2_t map;
+} mbt_pending_map_read;
+
+void *mbt_wgpu_buffer_map_read_begin(WGPUBuffer buffer, uint64_t offset, uint64_t size) {
+  mbt_pending_map_read *p = (mbt_pending_map_read *)calloc(1, sizeof(mbt_pending_map_read));
+  if (!p) return NULL;
+  WGPUBufferMapCallbackInfo info = {
+      .nextInChain = NULL,
+      .mode = WGPUCallbackMode_AllowProcessEvents,
+      .callback = mbt_buffer_map_cb2,
+      .userdata1 = &p->map,
+      .userdata2 = NULL,
+  };
+  (void)wgpuBufferMapAsync(buffer, WGPUMapMode_Read, (size_t)offset, (size_t)size, info);
+  return p;
+}
+
+int32_t mbt_wgpu_buffer_map_read_finish(WGPUInstance instance, void *pending, WGPUBuffer buffer,
+                                        uint64_t offset, uint64_t size, uint8_t *out,
+                                        uint64_t out_len) {
+  mbt_pending_map_read *p = (mbt_pending_map_read *)pending;
+  if (!p) return false;
+  while (p->map.status == 0) {
+    wgpuInstanceProcessEvents(instance);
+  }
+  int32_t ok = p->map.status == WGPUMapAsyncStatus_Success && size <= out_len;
+  free(p);
+  if (!ok) return false;
+  const void *mapped = wgpuBufferGetConstMappedRange(buffer, offset, size);
+  if (!mapped) return false;
+  memcpy(out, mapped, (size_t)size);
+  mbt_buffer_track_set_state(buffer, WGPUBufferMapState_Mapped);
+  return true;
+}
+
 int32_t mbt_wgpu_buffer_map_write_sync(WGPUInstance instance, WGPUBuffer buffer,
                                        uint64_t offset, const uint8_t *data,
                                        uint64_t data_len) {

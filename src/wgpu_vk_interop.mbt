@@ -208,7 +208,9 @@ pub fn CommandEncoder::transition_texture(
 /// wgpu-native's crates/wgpu-vk-handoff): device handles, the shared image
 /// with its size, format, usage and handoff state, and the owner's queue
 /// lock. Read through the pointer, which must stay valid while it is read
-/// (adoption and import); the lock is copied out (`queue_lock`).
+/// (adoption and import); the lock is copied out (`queue_lock`) and called
+/// until the adopter's teardown, so the owner's lock context must outlive
+/// that. The layout is append-only; `structSize` is the version.
 pub struct VulkanHandoff {
   raw : UInt64
 }

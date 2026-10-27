@@ -49,3 +49,38 @@ test "spec: buffer.map_{read,write}_sync + unmap" {
     instance.release()
   })
 }
+
+///|
+test "spec: buffer.map_read_begin + finish (map_async and the wait split)" {
+  run_on_supported_native_platform(() => {
+    let instance = @wgpu.Instance::create()
+    let adapter = instance.request_adapter_sync()
+    let device = adapter.request_device_sync(instance)
+    let queue = device.queue()
+    let read_buf = device.create_buffer(
+      size=16UL,
+      usage=bu(@wgpu.BUFFER_USAGE_MAP_READ | @wgpu.BUFFER_USAGE_COPY_DST),
+    )
+    // Pending write_buffer data: map_async submits it (wgpu 30) in begin.
+    queue.write_buffer(read_buf, 0UL, rgba_bytes(1U, 2U, 3U, 4U))
+    let pending = read_buf.map_read_begin(1UL, 3UL)
+    let out = pending.finish(instance)
+    read_buf.unmap()
+    @debug.debug_inspect(
+      [out[0].to_uint(), out[1].to_uint(), out[2].to_uint()],
+      content="[2, 3, 4]",
+    )
+    let twice = try {
+      ignore(pending.finish(instance))
+      false
+    } catch {
+      _ => true
+    }
+    @debug.debug_inspect(twice, content="true")
+    read_buf.release()
+    queue.release()
+    device.release()
+    adapter.release()
+    instance.release()
+  })
+}
