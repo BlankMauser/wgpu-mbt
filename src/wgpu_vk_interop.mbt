@@ -141,16 +141,21 @@ pub fn Instance::adapter_from_vulkan(
 }
 
 ///|
-/// The exporter's `VkDevice` and queue. The exporter's device must have no
-/// optional features and WebGPU default limits (wgpu's
-/// `DeviceDescriptor::default()`).
+/// The exporter's `VkDevice` and queue. `features`: `FEATURE_NAME_*` /
+/// `NATIVE_FEATURE_*` values the exporter's device was created with (a subset
+/// is safe; a feature it lacks is not); its limits must be WebGPU's defaults.
 pub fn Adapter::device_from_vulkan(
   self : Adapter,
   h : VulkanHandles,
+  features? : Array[UInt] = [],
 ) -> Device raise WgpuError {
   require_vulkan_interop()
+  let fs = FixedArray::make(features.length().max(1), 0U)
+  for i, f in features {
+    fs[i] = f
+  }
   let mut raw : @c.Device? = None
-  with_vk_handles(h, p => raw = Some(@c.vk_create_device(self.raw, p)))
+  with_vk_handles(h, p => raw = Some(@c.vk_create_device(self.raw, p, fs, features.length().to_uint64())))
   match raw {
     Some(r) if !@c.device_is_null(r) => { raw: r }
     _ => raise interop_error("wgpuAdapterCreateDeviceFromVulkanExt")
@@ -292,6 +297,19 @@ pub fn VulkanHandoff::usage(self : VulkanHandoff) -> TextureUsage {
 /// The agreed handoff state (one `TEXTURE_USAGE_*` flag).
 pub fn VulkanHandoff::state(self : VulkanHandoff) -> UInt64 {
   self.field(12)
+}
+
+///|
+/// The features the owner's device was created with (`FEATURE_NAME_*` /
+/// `NATIVE_FEATURE_*`); empty when the owner's layout predates the field.
+pub fn VulkanHandoff::features(self : VulkanHandoff) -> Array[UInt] {
+  let n = @c.vk_handoff_features(self.raw, FixedArray::make(1, 0U), 0UL)
+  if n == 0UL {
+    return []
+  }
+  let out = FixedArray::make(n.to_int(), 0U)
+  ignore(@c.vk_handoff_features(self.raw, out, n))
+  Array::from_fixed_array(out)
 }
 
 ///|

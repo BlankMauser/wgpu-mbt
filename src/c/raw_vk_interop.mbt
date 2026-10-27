@@ -37,10 +37,12 @@ pub extern "C" fn vk_create_adapter(
 ) -> Adapter = "mbt_wgpu_vk_create_adapter"
 
 ///|
-#borrow(adapter, handles)
+#borrow(adapter, handles, features)
 pub extern "C" fn vk_create_device(
   adapter : Adapter,
   handles : OpaquePtr,
+  features : FixedArray[UInt],
+  feature_count : UInt64,
 ) -> Device = "mbt_wgpu_vk_create_device"
 
 ///|
@@ -90,6 +92,10 @@ pub extern "C" fn vk_handoff_u64(p : UInt64, field : Int) -> UInt64 = "mbt_wgpu_
 ///|
 #borrow(out)
 pub extern "C" fn vk_handoff_names(p : UInt64, which : Int, out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_names"
+
+///|
+#borrow(out)
+pub extern "C" fn vk_handoff_features(p : UInt64, out : FixedArray[UInt], capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_features"
 
 ///|
 pub extern "C" fn vk_handoff_queue_lock(p : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_queue_lock"

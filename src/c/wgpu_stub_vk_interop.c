@@ -131,10 +131,16 @@ WGPUAdapter mbt_wgpu_vk_create_adapter(WGPUInstance instance, void *handles) {
 
 // No descriptor: the exporter's device must have no optional features and
 // WebGPU default limits (what wgpu's DeviceDescriptor::default() requests).
-WGPUDevice mbt_wgpu_vk_create_device(WGPUAdapter adapter, void *handles) {
+// features: the WGPUFeatureName values the owner's VkDevice was created with
+// (count 0: none); default limits.
+WGPUDevice mbt_wgpu_vk_create_device(WGPUAdapter adapter, void *handles, const uint32_t *features,
+                                     uint64_t feature_count) {
   pfn_create_device f = (pfn_create_device)mbt_wgpu_optional_sym(MBT_VK_SYMS[2]);
   if (!f || !handles || !adapter) return NULL;
-  return f(adapter, &((mbt_vk_handles *)handles)->h, NULL);
+  WGPUDeviceDescriptor desc = WGPU_DEVICE_DESCRIPTOR_INIT;
+  desc.requiredFeatureCount = (size_t)feature_count;
+  desc.requiredFeatures = (const WGPUFeatureName *)features;
+  return f(adapter, &((mbt_vk_handles *)handles)->h, feature_count ? &desc : NULL);
 }
 
 WGPUTexture mbt_wgpu_vk_import_image(WGPUDevice device, uint64_t image, uint32_t width,
@@ -186,7 +192,13 @@ typedef struct mbt_WGPUVulkanHandoffExt {
   void (*lock)(void *);
   void (*unlock)(void *);
   void *lockContext;
+  // Appended fields: read only when structSize covers them.
+  size_t featureCount;
+  const uint32_t *features;
 } mbt_WGPUVulkanHandoffExt;
+
+// The first layout (before the appended features): the minimum readable.
+#define MBT_HANDOFF_MIN_SIZE offsetof(mbt_WGPUVulkanHandoffExt, featureCount)
 
 static const mbt_WGPUVulkanHandoffExt *mbt_handoff(uint64_t p) {
   return (const mbt_WGPUVulkanHandoffExt *)(uintptr_t)p;
@@ -194,7 +206,7 @@ static const mbt_WGPUVulkanHandoffExt *mbt_handoff(uint64_t p) {
 
 // 1: a handoff this build can read (non-null, structSize covers the layout).
 int32_t mbt_wgpu_vk_handoff_valid(uint64_t p) {
-  return p != 0 && mbt_handoff(p)->structSize >= sizeof(mbt_WGPUVulkanHandoffExt);
+  return p != 0 && mbt_handoff(p)->structSize >= MBT_HANDOFF_MIN_SIZE;
 }
 
 uint64_t mbt_wgpu_vk_handoff_u64(uint64_t p, int32_t field) {
@@ -252,6 +264,18 @@ uint64_t mbt_wgpu_vk_handoff_queue_lock(uint64_t p) {
   q->unlock = h->unlock;
   q->context = h->lockContext;
   return (uint64_t)(uintptr_t)q;
+}
+
+// The appended features (0 when the writer's layout predates them): the
+// count, and a copy into out when capacity suffices.
+uint64_t mbt_wgpu_vk_handoff_features(uint64_t p, uint32_t *out, uint64_t capacity) {
+  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
+  if (h->structSize < offsetof(mbt_WGPUVulkanHandoffExt, features) + sizeof(h->features)) return 0;
+  if (h->featureCount && !h->features) return 0;
+  if (out && h->featureCount <= capacity) {
+    memcpy(out, h->features, h->featureCount * sizeof(uint32_t));
+  }
+  return h->featureCount;
 }
 
 void mbt_wgpu_vk_queue_lock_lock(uint64_t q) {
