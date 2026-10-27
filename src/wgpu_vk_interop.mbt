@@ -202,3 +202,109 @@ pub fn CommandEncoder::transition_texture(
     raise interop_error("wgpuCommandEncoderTransitionTextureExt")
   }
 }
+
+///|
+/// A `WGPUVulkanHandoffExt` the owner built from its own objects (Rust:
+/// wgpu-native's crates/wgpu-vk-handoff): device handles, the shared image
+/// with its size, format, usage and handoff state, and the owner's queue
+/// lock. Read through the pointer, which stays valid while the owner keeps
+/// the handoff alive.
+pub struct VulkanHandoff {
+  raw : UInt64
+}
+
+///|
+/// Raises unless `ptr` points at a handoff this build can read.
+pub fn VulkanHandoff::from_ptr(ptr : UInt64) -> VulkanHandoff raise WgpuError {
+  if !@c.vk_handoff_valid(ptr) {
+    raise WgpuVulkanInterop(
+      "not a WGPUVulkanHandoffExt (null, or structSize smaller than this build's layout)",
+    )
+  }
+  { raw: ptr }
+}
+
+///|
+fn VulkanHandoff::field(self : VulkanHandoff, i : Int) -> UInt64 {
+  @c.vk_handoff_u64(self.raw, i)
+}
+
+///|
+fn VulkanHandoff::names(self : VulkanHandoff, which : Int) -> Array[String] {
+  let n = @c.vk_handoff_names(self.raw, which, Bytes::make(0, b'\x00'), 0UL)
+  let buf = Bytes::make(n.to_int(), b'\x00')
+  ignore(@c.vk_handoff_names(self.raw, which, buf, n))
+  let out = []
+  let mut start = 0
+  for i in 0..<buf.length() {
+    if buf[i] == b'\x00' {
+      out.push(@utf8.decode_lossy(buf[start:i]))
+      start = i + 1
+    }
+  }
+  out
+}
+
+///|
+/// The device handles (for `Instance::from_vulkan` and the rest).
+pub fn VulkanHandoff::handles(self : VulkanHandoff) -> VulkanHandles {
+  {
+    get_instance_proc_addr: self.field(0),
+    instance: self.field(1),
+    instance_api_version: self.field(2).to_uint(),
+    instance_extensions: self.names(0),
+    physical_device: self.field(3),
+    device: self.field(4),
+    device_extensions: self.names(1),
+    queue_family_index: self.field(5).to_uint(),
+    queue_index: self.field(6).to_uint(),
+  }
+}
+
+///|
+pub fn VulkanHandoff::image(self : VulkanHandoff) -> UInt64 {
+  self.field(7)
+}
+
+///|
+pub fn VulkanHandoff::width(self : VulkanHandoff) -> UInt {
+  self.field(8).to_uint()
+}
+
+///|
+pub fn VulkanHandoff::height(self : VulkanHandoff) -> UInt {
+  self.field(9).to_uint()
+}
+
+///|
+pub fn VulkanHandoff::format(self : VulkanHandoff) -> TextureFormat {
+  TextureFormat::from_u32(self.field(10).to_uint())
+}
+
+///|
+pub fn VulkanHandoff::usage(self : VulkanHandoff) -> TextureUsage {
+  TextureUsage::from_u64(self.field(11))
+}
+
+///|
+/// The agreed handoff state (one `TEXTURE_USAGE_*` flag).
+pub fn VulkanHandoff::state(self : VulkanHandoff) -> UInt64 {
+  self.field(12)
+}
+
+///|
+/// The owner exported its queue lock.
+pub fn VulkanHandoff::has_lock(self : VulkanHandoff) -> Bool {
+  self.field(13) != 0UL
+}
+
+///|
+/// Takes the owner's queue lock (no-op without one).
+pub fn VulkanHandoff::lock(self : VulkanHandoff) -> Unit {
+  @c.vk_handoff_lock(self.raw)
+}
+
+///|
+pub fn VulkanHandoff::unlock(self : VulkanHandoff) -> Unit {
+  @c.vk_handoff_unlock(self.raw)
+}

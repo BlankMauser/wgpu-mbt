@@ -48,3 +48,15 @@ test "vulkan interop: handoff states are exactly one known flag, part of the usa
   assert_false(refused(TEXTURE_USAGE_TEXTURE_BINDING, Some(TEXTURE_USAGE_TEXTURE_BINDING | TEXTURE_USAGE_COPY_SRC)))
   assert_false(refused(TEXTURE_USAGE_NONE, Some(TEXTURE_USAGE_COPY_SRC)))
 }
+
+///|
+test "vulkan interop: a null handoff pointer is refused" {
+  let refused = try {
+    ignore(VulkanHandoff::from_ptr(0UL))
+    false
+  } catch {
+    WgpuVulkanInterop(_) => true
+    _ => false
+  }
+  assert_true(refused)
+}

@@ -80,3 +80,19 @@ pub extern "C" fn vk_texture_is_null(p : Texture) -> Bool = "mbt_wgpu_vk_texture
 ///|
 #borrow(p)
 pub extern "C" fn vk_ptr_is_null(p : OpaquePtr) -> Bool = "mbt_wgpu_vk_ptr_is_null"
+
+///|
+pub extern "C" fn vk_handoff_valid(p : UInt64) -> Bool = "mbt_wgpu_vk_handoff_valid"
+
+///|
+pub extern "C" fn vk_handoff_u64(p : UInt64, field : Int) -> UInt64 = "mbt_wgpu_vk_handoff_u64"
+
+///|
+#borrow(out)
+pub extern "C" fn vk_handoff_names(p : UInt64, which : Int, out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_handoff_names"
+
+///|
+pub extern "C" fn vk_handoff_lock(p : UInt64) -> Unit = "mbt_wgpu_vk_handoff_lock"
+
+///|
+pub extern "C" fn vk_handoff_unlock(p : UInt64) -> Unit = "mbt_wgpu_vk_handoff_unlock"

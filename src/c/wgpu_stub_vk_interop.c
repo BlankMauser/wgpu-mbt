@@ -172,3 +172,73 @@ uint64_t mbt_wgpu_vk_last_error(moonbit_bytes_t out, uint64_t capacity) {
 int32_t mbt_wgpu_vk_instance_is_null(WGPUInstance p) { return p == NULL; }
 int32_t mbt_wgpu_vk_texture_is_null(WGPUTexture p) { return p == NULL; }
 int32_t mbt_wgpu_vk_ptr_is_null(void *p) { return p == NULL; }
+
+// Layout must match WGPUVulkanHandoffExt in wgpu_vk_interop.h.
+typedef struct mbt_WGPUVulkanHandoffExt {
+  uint32_t structSize;
+  mbt_WGPUVulkanDeviceHandlesExt device;
+  uint64_t image;
+  uint32_t width;
+  uint32_t height;
+  uint32_t format;
+  uint64_t usage;
+  uint64_t state;
+  void (*lock)(void *);
+  void (*unlock)(void *);
+  void *lockContext;
+} mbt_WGPUVulkanHandoffExt;
+
+static const mbt_WGPUVulkanHandoffExt *mbt_handoff(uint64_t p) {
+  return (const mbt_WGPUVulkanHandoffExt *)(uintptr_t)p;
+}
+
+// 1: a handoff this build can read (non-null, structSize covers the layout).
+int32_t mbt_wgpu_vk_handoff_valid(uint64_t p) {
+  return p != 0 && mbt_handoff(p)->structSize >= sizeof(mbt_WGPUVulkanHandoffExt);
+}
+
+uint64_t mbt_wgpu_vk_handoff_u64(uint64_t p, int32_t field) {
+  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
+  switch (field) {
+    case 0: return (uint64_t)(uintptr_t)h->device.getInstanceProcAddr;
+    case 1: return h->device.instance;
+    case 2: return h->device.instanceApiVersion;
+    case 3: return h->device.physicalDevice;
+    case 4: return h->device.device;
+    case 5: return h->device.queueFamilyIndex;
+    case 6: return h->device.queueIndex;
+    case 7: return h->image;
+    case 8: return h->width;
+    case 9: return h->height;
+    case 10: return h->format;
+    case 11: return h->usage;
+    case 12: return h->state;
+    case 13: return h->lock != NULL && h->unlock != NULL;
+    default: return 0;
+  }
+}
+
+// Instance (which 0) or device (1) extension names, NUL-terminated back to
+// back: the length, and a copy into out when capacity suffices.
+uint64_t mbt_wgpu_vk_handoff_names(uint64_t p, int32_t which, moonbit_bytes_t out, uint64_t capacity) {
+  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
+  size_t count = which ? h->device.deviceExtensionCount : h->device.instanceExtensionCount;
+  char const *const *names = which ? h->device.deviceExtensions : h->device.instanceExtensions;
+  uint64_t n = 0;
+  for (size_t i = 0; i < count && names; i++) {
+    size_t len = strlen(names[i]) + 1;
+    if (out && n + len <= capacity) memcpy(out + n, names[i], len);
+    n += len;
+  }
+  return n;
+}
+
+void mbt_wgpu_vk_handoff_lock(uint64_t p) {
+  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
+  if (h->lock) h->lock(h->lockContext);
+}
+
+void mbt_wgpu_vk_handoff_unlock(uint64_t p) {
+  const mbt_WGPUVulkanHandoffExt *h = mbt_handoff(p);
+  if (h->unlock) h->unlock(h->lockContext);
+}
