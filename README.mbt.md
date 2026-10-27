@@ -11,11 +11,26 @@ MoonBit bindings for the `wgpu-native` C API (WebGPU), targeting **native** back
 > the submodule is exactly at that commit and unmodified, runs
 > `cargo build --release` once, and caches a release-shaped tree under
 > `<cache>/wgpu-native/v30.0.1-lf.1+src.fa01034/` (cache: `MBT_WGPU_NATIVE_CACHE_DIR`,
-> else `~/.cache/wgpu_mbt`; cargo target: `CARGO_TARGET_DIR`, else under the
-> cache). **Rust (cargo, 1.87 or newer: wgpu-core 30.0.1's rust-version) is required**, and the submodules must be
+> else `~/.cache/wgpu_mbt`). **Rust (cargo, 1.87 or newer: wgpu-core 30.0.1's rust-version) is required**, and the submodules must be
 > checked out (`git submodule update --init --recursive`). No downloads, no
 > environment variables needed. `MBT_WGPU_NATIVE_SOURCE=official` restores the
 > upstream v29.0.1.1 download described below.
+>
+> Build guards: the submodule must be at the pinned commit with no local
+> changes or untracked files; `cargo metadata --locked` must show no
+> dependency resolving to a local path (a `paths` override or `[patch]` in some
+> `.cargo/config.toml` would otherwise swap a pinned crate silently); a lock
+> file in the cache serialises builds from several checkouts. The toolchain
+> (`rustc -vV`) and build env (`RUSTFLAGS`, `CARGO_PROFILE_*`, target) are
+> recorded in `wgpu-native-meta/build-environment.json`; a cache hit built with
+> a different one is used with a warning. The cargo target dir is
+> `CARGO_TARGET_DIR`, else `target/wgpu-native` in this checkout (never the
+> cache dir). The cache key is the label and source commit, not the binary:
+> builds on different machines are not byte-identical.
+>
+> Without Rust: point `MBT_WGPU_NATIVE_ROOT` at an extracted release-shaped
+> tree (`lib/`, `include/webgpu/`, `wgpu-native-meta/wgpu-native-git-tag`
+> holding the label above), e.g. a copy of a cache entry built elsewhere.
 >
 > Behaviour changes that come with wgpu 30 (the C ABI is the same, validation
 > and WGSL are stricter):
@@ -23,9 +38,11 @@ MoonBit bindings for the `wgpu-native` C API (WebGPU), targeting **native** back
 >   shader (naga 30). naga 29 rejects that directive, so such shaders are
 >   wgpu-30-only.
 > - A depth/stencil attachment whose stencil aspect is absent (e.g.
->   `Depth32Float`) or read-only must not carry stencil load/store ops. The
->   `begin_render_pass_*depth*` helpers now pass `Undefined` stencil ops when
->   `stencil_read_only` is true (their default); this also works on wgpu 29.
+>   `Depth32Float`) or read-only must not carry stencil load/store ops, and a
+>   read-only depth aspect must not carry depth ops. The render-pass helpers
+>   (`begin_render_pass_*depth*`, `RenderPassDescBuilder::set_depth_stencil_attachment`)
+>   pass `Undefined` ops for an aspect marked read-only (`stencil_read_only`
+>   defaults to true in the `begin_*` helpers); this also works on wgpu 29.
 
 ## Supported Platforms
 

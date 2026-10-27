@@ -2931,8 +2931,9 @@ uint32_t mbt_wgpu_render_pass_desc_builder_set_depth_stencil_attachment_u32(
   mbt_wgpu_render_pass_desc_builder_clear_error(out);
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
-      .depthLoadOp = (WGPULoadOp)depth_load_op_u32,
-      .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
@@ -2981,8 +2982,9 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_depth_u32_new(
   }
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
-      .depthLoadOp = (WGPULoadOp)depth_load_op_u32,
-      .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
@@ -3167,8 +3169,9 @@ mbt_wgpu_render_pass_descriptor_color2_depth_u32_new(
   };
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
-      .depthLoadOp = (WGPULoadOp)depth_load_op_u32,
-      .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
@@ -3233,8 +3236,9 @@ mbt_wgpu_render_pass_descriptor_color2_depth_sparse_u32_new(
   };
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
-      .depthLoadOp = (WGPULoadOp)depth_load_op_u32,
-      .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
@@ -3446,8 +3450,9 @@ WGPURenderPassDescriptor *mbt_wgpu_render_pass_descriptor_color_depth_u32_new(
   };
   out->depth = (WGPURenderPassDepthStencilAttachment){
       .view = depth_view,
-      .depthLoadOp = (WGPULoadOp)depth_load_op_u32,
-      .depthStoreOp = (WGPUStoreOp)depth_store_op_u32,
+      // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.
+      .depthLoadOp = depth_read_only ? WGPULoadOp_Undefined : (WGPULoadOp)depth_load_op_u32,
+      .depthStoreOp = depth_read_only ? WGPUStoreOp_Undefined : (WGPUStoreOp)depth_store_op_u32,
       .depthClearValue = depth_clear_value_f32,
       .depthReadOnly = depth_read_only ? 1u : 0u,
       // WebGPU (enforced since wgpu 30): a read-only aspect takes no ops.

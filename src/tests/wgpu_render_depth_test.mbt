@@ -553,3 +553,63 @@ test "wgpu render depth: configurable pass depth load/store" {
   adapter.release()
   instance.release()
 }
+
+///|
+test "wgpu render depth: depth_read_only passes no depth ops (WebGPU; enforced since wgpu 30)" {
+  // With depth_read_only=true the helpers pass Undefined depth ops whatever
+  // the depth_*_op arguments say (here the Clear/Store defaults). wgpu 30
+  // refuses ops on a read-only aspect: without the rule this submit is a
+  // validation error, which wgpu-native turns into an abort.
+  let instance = @wgpu.Instance::create()
+  let adapter = instance.request_adapter_sync()
+  let device = adapter.request_device_sync(instance)
+  let queue = device.queue()
+  let color_tex = device.create_texture_rgba8_2d(1U, 1U)
+  let color_view = color_tex.create_view()
+  let depth_tex = device.create_texture_depth24plus_2d(1U, 1U)
+  let depth_view = depth_tex.create_view()
+  let readback = device.create_buffer(
+    size=256UL,
+    usage=bu(@wgpu.BUFFER_USAGE_MAP_READ | @wgpu.BUFFER_USAGE_COPY_DST),
+  )
+  device.push_error_scope(@wgpu.ERROR_FILTER_VALIDATION)
+  let encoder = device.create_command_encoder()
+  let pass0 = encoder.begin_render_pass_color_depth_u32(
+    color_view,
+    depth_view,
+    color_clear_g_f32=1.0,
+    depth_load_op_u32=@wgpu.LOAD_OP_CLEAR,
+    depth_store_op_u32=@wgpu.STORE_OP_STORE,
+  )
+  pass0.end()
+  pass0.release()
+  let pass1 = encoder.begin_render_pass_color_depth_u32(
+    color_view,
+    depth_view,
+    color_load_op_u32=@wgpu.LOAD_OP_LOAD,
+    depth_read_only=true,
+  )
+  pass1.end()
+  pass1.release()
+  encoder.copy_texture_to_buffer_rgba8(color_tex, readback, 1U, 1U)
+  let cmd = encoder.finish()
+  let err = device.pop_error_scope_sync(instance)
+  @debug.debug_inspect(err == @wgpu.ERROR_TYPE_NO_ERROR, content="true")
+  queue.submit_one(cmd)
+  let out = readback.readback(instance, 0UL, 4UL)
+  @debug.debug_inspect(
+    [out[0].to_uint(), out[1].to_uint(), out[2].to_uint(), out[3].to_uint()],
+    content="[0, 255, 0, 255]",
+  )
+  cmd.release()
+  encoder.release()
+  readback.release()
+  depth_view.release()
+  depth_tex.release()
+  color_view.release()
+  color_tex.release()
+  queue.release()
+  device.release()
+  adapter.release()
+  instance.release()
+}
