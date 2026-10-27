@@ -47,6 +47,38 @@ fn require_vulkan_interop() -> Unit raise WgpuError {
 }
 
 ///|
+/// The message wgpu-native left for the last refused interop call.
+fn interop_error(what : String) -> WgpuError {
+  let n = @c.vk_last_error(Bytes::make(0, b'\x00'), 0UL)
+  if n == 0UL {
+    return WgpuVulkanInterop("\{what} failed")
+  }
+  let buf = Bytes::make(n.to_int(), b'\x00')
+  ignore(@c.vk_last_error(buf, n))
+  WgpuVulkanInterop(@utf8.decode_lossy(buf[:]))
+}
+
+///|
+/// A handoff state is exactly one known `TEXTURE_USAGE_*` flag (or
+/// `TEXTURE_USAGE_NONE` for an import whose contents do not matter).
+fn check_state(state : UInt64, usage : UInt64?) -> Unit raise WgpuError {
+  let known = [
+    TEXTURE_USAGE_NONE, TEXTURE_USAGE_COPY_SRC, TEXTURE_USAGE_COPY_DST, TEXTURE_USAGE_TEXTURE_BINDING,
+    TEXTURE_USAGE_STORAGE_BINDING, TEXTURE_USAGE_RENDER_ATTACHMENT,
+  ]
+  if !known.contains(state) {
+    raise WgpuVulkanInterop(
+      "state 0x\{state.to_string(radix=16)} is not exactly one TEXTURE_USAGE_* flag",
+    )
+  }
+  if usage is Some(u) && state != TEXTURE_USAGE_NONE && (u & state) == 0UL {
+    raise WgpuVulkanInterop(
+      "state 0x\{state.to_string(radix=16)} is not part of the texture's usage 0x\{u.to_string(radix=16)}",
+    )
+  }
+}
+
+///|
 fn names_blob(names : Array[String]) -> Bytes {
   let buf = Buffer()
   for n in names {
@@ -88,10 +120,7 @@ pub fn Instance::from_vulkan(h : VulkanHandles) -> Instance raise WgpuError {
   with_vk_handles(h, p => raw = Some(@c.vk_create_instance(p)))
   match raw {
     Some(r) if !@c.vk_instance_is_null(r) => { raw: r }
-    _ =>
-      raise WgpuNativeUnsupported(
-        "wgpuCreateInstanceFromVulkanExt failed (see the wgpu-native log)",
-      )
+    _ => raise interop_error("wgpuCreateInstanceFromVulkanExt")
   }
 }
 
@@ -107,10 +136,7 @@ pub fn Instance::adapter_from_vulkan(
   with_vk_handles(h, p => raw = Some(@c.vk_create_adapter(self.raw, p)))
   match raw {
     Some(r) if !@c.adapter_is_null(r) => { raw: r }
-    _ =>
-      raise WgpuNativeUnsupported(
-        "wgpuInstanceCreateAdapterFromVulkanExt failed (see the wgpu-native log)",
-      )
+    _ => raise interop_error("wgpuInstanceCreateAdapterFromVulkanExt")
   }
 }
 
@@ -127,10 +153,7 @@ pub fn Adapter::device_from_vulkan(
   with_vk_handles(h, p => raw = Some(@c.vk_create_device(self.raw, p)))
   match raw {
     Some(r) if !@c.device_is_null(r) => { raw: r }
-    _ =>
-      raise WgpuNativeUnsupported(
-        "wgpuAdapterCreateDeviceFromVulkanExt failed (see the wgpu-native log)",
-      )
+    _ => raise interop_error("wgpuAdapterCreateDeviceFromVulkanExt")
   }
 }
 
@@ -149,6 +172,7 @@ pub fn Device::import_vulkan_image(
   initial_state~ : UInt64,
 ) -> Texture raise WgpuError {
   require_vulkan_interop()
+  check_state(initial_state, Some(usage.to_u64()))
   let raw = @c.vk_import_image(
     self.raw,
     image,
@@ -159,7 +183,7 @@ pub fn Device::import_vulkan_image(
     initial_state,
   )
   if @c.vk_texture_is_null(raw) {
-    raise WgpuNativeUnsupported("wgpuDeviceImportVulkanImageExt failed")
+    raise interop_error("wgpuDeviceImportVulkanImageExt")
   }
   { raw, }
 }
@@ -173,10 +197,8 @@ pub fn CommandEncoder::transition_texture(
   state : UInt64,
 ) -> Unit raise WgpuError {
   require_vulkan_interop()
+  check_state(state, None)
   if !@c.vk_transition_texture(self.raw, texture.raw, state) {
-    raise WgpuNativeMissingSymbol(
-      "wgpuCommandEncoderTransitionTextureExt",
-      native_diagnostic(),
-    )
+    raise interop_error("wgpuCommandEncoderTransitionTextureExt")
   }
 }

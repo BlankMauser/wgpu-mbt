@@ -64,6 +64,12 @@ pub extern "C" fn vk_transition_texture(
 ) -> Bool = "mbt_wgpu_vk_transition_texture"
 
 ///|
+/// This thread's last interop error: its length; copied into `out` when
+/// `capacity` suffices.
+#borrow(out)
+pub extern "C" fn vk_last_error(out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_vk_last_error"
+
+///|
 #borrow(p)
 pub extern "C" fn vk_instance_is_null(p : Instance) -> Bool = "mbt_wgpu_vk_instance_is_null"
 

@@ -30,3 +30,21 @@ test "vulkan interop: absent symbols fail cleanly, present ones are all there" {
   }
   println("has_vulkan_interop=\{has}")
 }
+
+///|
+test "vulkan interop: handoff states are exactly one known flag, part of the usage" {
+  let refused = fn(state : UInt64, usage : UInt64?) -> Bool {
+    try {
+      check_state(state, usage)
+      false
+    } catch {
+      WgpuVulkanInterop(_) => true
+      _ => false
+    }
+  }
+  assert_true(refused(TEXTURE_USAGE_TEXTURE_BINDING | TEXTURE_USAGE_COPY_SRC, None))
+  assert_true(refused(0x40UL, None))
+  assert_true(refused(TEXTURE_USAGE_COPY_DST, Some(TEXTURE_USAGE_TEXTURE_BINDING)))
+  assert_false(refused(TEXTURE_USAGE_TEXTURE_BINDING, Some(TEXTURE_USAGE_TEXTURE_BINDING | TEXTURE_USAGE_COPY_SRC)))
+  assert_false(refused(TEXTURE_USAGE_NONE, Some(TEXTURE_USAGE_COPY_SRC)))
+}

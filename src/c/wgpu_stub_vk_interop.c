@@ -43,7 +43,8 @@ typedef WGPUDevice (*pfn_create_device)(WGPUAdapter, mbt_WGPUVulkanDeviceHandles
                                         WGPUDeviceDescriptor const *);
 typedef WGPUTexture (*pfn_import_image)(WGPUDevice, uint64_t, WGPUTextureDescriptor const *,
                                         WGPUTextureUsage);
-typedef void (*pfn_transition)(WGPUCommandEncoder, WGPUTexture, WGPUTextureUsage);
+typedef WGPUBool (*pfn_transition)(WGPUCommandEncoder, WGPUTexture, WGPUTextureUsage);
+typedef size_t (*pfn_last_error)(char *, size_t);
 
 static const char *const MBT_VK_SYMS[] = {
     "wgpuCreateInstanceFromVulkanExt",
@@ -51,6 +52,7 @@ static const char *const MBT_VK_SYMS[] = {
     "wgpuAdapterCreateDeviceFromVulkanExt",
     "wgpuDeviceImportVulkanImageExt",
     "wgpuCommandEncoderTransitionTextureExt",
+    "wgpuVulkanInteropLastErrorExt",
 };
 
 int32_t mbt_wgpu_vk_interop_available(void) {
@@ -157,8 +159,14 @@ int32_t mbt_wgpu_vk_transition_texture(WGPUCommandEncoder encoder, WGPUTexture t
                                        uint64_t state) {
   pfn_transition f = (pfn_transition)mbt_wgpu_optional_sym(MBT_VK_SYMS[4]);
   if (!f || !encoder || !texture) return 0;
-  f(encoder, texture, (WGPUTextureUsage)state);
-  return 1;
+  return f(encoder, texture, (WGPUTextureUsage)state) ? 1 : 0;
+}
+
+// The last interop error of this thread: length, and a copy when it fits.
+uint64_t mbt_wgpu_vk_last_error(moonbit_bytes_t out, uint64_t capacity) {
+  pfn_last_error f = (pfn_last_error)mbt_wgpu_optional_sym(MBT_VK_SYMS[5]);
+  if (!f) return 0;
+  return (uint64_t)f((char *)out, (size_t)capacity);
 }
 
 int32_t mbt_wgpu_vk_instance_is_null(WGPUInstance p) { return p == NULL; }
