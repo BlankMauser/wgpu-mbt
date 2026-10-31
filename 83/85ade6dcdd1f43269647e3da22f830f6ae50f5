@@ -1,0 +1,14 @@
+deps/wgpu-native
+  h_03360edcd9e88f 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8385ade6dcdd1f43269647e3da22f830f6ae50f5",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
