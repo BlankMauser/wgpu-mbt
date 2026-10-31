@@ -1,0 +1,20 @@
+src/c/pkg.generated.mbti
+  h_03360edcd9e88f 879-880,1507-1508
+src/c/raw_core.mbt
+  h_03360edcd9e88f 134-139
+src/c/wgpu_stub_core.c
+  h_03360edcd9e88f 58-59
+src/wgpu_adopt_core.mbt
+  h_03360edcd9e88f 29-31,33-35,38,48,86-90,108
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5a82ae87f45bcd9e113a88c4fa5a28cad23f4290",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
