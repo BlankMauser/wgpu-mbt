@@ -1,0 +1,24 @@
+README.mbt.md
+  h_03360edcd9e88f 9,16
+deps/wgpu-native
+  h_03360edcd9e88f 1
+scripts/wgpu_native_release.js
+  h_03360edcd9e88f 11-12
+src/c/wgpu_stub_adopt_core.c
+  h_03360edcd9e88f 17-24,58-72
+src/c/wgpu_stub_helpers_sync.c
+  h_03360edcd9e88f 639,681
+src/wgpu_adopt_core.mbt
+  h_03360edcd9e88f 71-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "35a8efdcedceff612082bc00b7b9a2ecf495eb51",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
