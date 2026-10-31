@@ -55,6 +55,8 @@ int32_t mbt_wgpu_render_pass_descriptor_ptr_is_null(
 }
 
 int32_t mbt_wgpu_adapter_is_null(WGPUAdapter adapter) { return adapter == NULL; }
+int32_t mbt_wgpu_instance_is_null(WGPUInstance instance) { return instance == NULL; }
+int32_t mbt_wgpu_texture_is_null(WGPUTexture texture) { return texture == NULL; }
 int32_t mbt_wgpu_device_is_null(WGPUDevice device) { return device == NULL; }
 int32_t mbt_wgpu_bind_group_layout_is_null(WGPUBindGroupLayout bind_group_layout) {
   return bind_group_layout == NULL;

@@ -45,6 +45,7 @@ options(
     "wgpu_texture.mbt": [ "native" ],
     "wgpu_types.mbt": [ "native" ],
     "wgpu_vk_interop.mbt": [ "native" ],
+    "wgpu_adopt_core.mbt": [ "native" ],
     "wgpu_vk_interop_wbtest.mbt": [ "native" ],
     "wgpu_windowing.mbt": [ "native" ],
   },

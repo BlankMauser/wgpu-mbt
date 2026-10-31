@@ -153,6 +153,19 @@ static void mbt_wgpu_die(const char *what) {
 extern void wgpuNativeLoadOpDontCare(void);
 #endif
 
+#ifndef MBT_WGPU_STATIC_HAS_ADOPT_CORE
+#define MBT_WGPU_STATIC_HAS_ADOPT_CORE 0
+#endif
+#if MBT_WGPU_STATIC_HAS_ADOPT_CORE
+// BlankMauser/wgpu-native adopt-core feature (wgpu_adopt_core.h): a host's
+// device in the same wgpu-core Global. Only their addresses are taken here.
+extern void wgpuCreateInstanceFromCoreExt(void);
+extern void wgpuInstanceAdoptAdapterExt(void);
+extern void wgpuAdapterAdoptDeviceExt(void);
+extern void wgpuDeviceAdoptTextureExt(void);
+extern void wgpuCoreAdoptLastErrorExt(void);
+#endif
+
 #if MBT_WGPU_STATIC_HAS_VK_INTEROP
 // BlankMauser/wgpu-native Vulkan interop (wgpu_vk_interop.h). Only their
 // addresses are taken here; wgpu_stub_vk_interop.c calls them through the
@@ -173,6 +186,23 @@ static void *mbt_wgpu_static_known_sym(const char *name) {
 #if MBT_WGPU_STATIC_HAS_LOAD_OP_DONT_CARE
   if (strcmp(name, "wgpuNativeLoadOpDontCare") == 0) {
     return (void *)wgpuNativeLoadOpDontCare;
+  }
+#endif
+#if MBT_WGPU_STATIC_HAS_ADOPT_CORE
+  if (strcmp(name, "wgpuCreateInstanceFromCoreExt") == 0) {
+    return (void *)wgpuCreateInstanceFromCoreExt;
+  }
+  if (strcmp(name, "wgpuInstanceAdoptAdapterExt") == 0) {
+    return (void *)wgpuInstanceAdoptAdapterExt;
+  }
+  if (strcmp(name, "wgpuAdapterAdoptDeviceExt") == 0) {
+    return (void *)wgpuAdapterAdoptDeviceExt;
+  }
+  if (strcmp(name, "wgpuDeviceAdoptTextureExt") == 0) {
+    return (void *)wgpuDeviceAdoptTextureExt;
+  }
+  if (strcmp(name, "wgpuCoreAdoptLastErrorExt") == 0) {
+    return (void *)wgpuCoreAdoptLastErrorExt;
   }
 #endif
 #if MBT_WGPU_STATIC_HAS_VK_INTEROP

@@ -132,6 +132,12 @@ pub extern "C" fn shader_module_is_null(shader_module : ShaderModule) -> Bool = 
 pub extern "C" fn adapter_is_null(adapter : WGPUAdapter) -> Bool = "mbt_wgpu_adapter_is_null"
 
 ///|
+pub extern "C" fn instance_is_null(instance : Instance) -> Bool = "mbt_wgpu_instance_is_null"
+
+///|
+pub extern "C" fn texture_is_null(texture : Texture) -> Bool = "mbt_wgpu_texture_is_null"
+
+///|
 pub extern "C" fn device_is_null(device : WGPUDevice) -> Bool = "mbt_wgpu_device_is_null"
 
 ///|

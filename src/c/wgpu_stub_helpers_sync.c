@@ -636,7 +636,7 @@ typedef struct {
   size_t message_len;
 } mbt_request_device_result_t;
 
-static void mbt_uncaptured_error_noop_cb(WGPUDevice const *device, WGPUErrorType type,
+void mbt_uncaptured_error_noop_cb(WGPUDevice const *device, WGPUErrorType type,
                                         WGPUStringView message, void *userdata1,
                                         void *userdata2) {
   (void)device;
@@ -678,7 +678,7 @@ static void mbt_device_lost_upsert(WGPUDevice device, uint32_t reason) {
   mbt_wgpu_device_lost_mu_unlock();
 }
 
-static void mbt_device_lost_cb(WGPUDevice const *device, WGPUDeviceLostReason reason,
+void mbt_device_lost_cb(WGPUDevice const *device, WGPUDeviceLostReason reason,
                                WGPUStringView message, void *userdata1,
                                void *userdata2) {
   (void)userdata1;

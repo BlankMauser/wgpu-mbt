@@ -544,6 +544,8 @@ pub suberror WgpuError {
   WgpuRequestDeviceFailed(UInt)
   /// A Vulkan interop call refused its input (message from wgpu-native).
   WgpuVulkanInterop(String)
+  /// A core adoption call refused its input (message from wgpu-native).
+  WgpuCoreAdopt(String)
 }
 
 ///|
@@ -586,6 +588,7 @@ pub fn WgpuError::message(self : WgpuError) -> String {
     WgpuNativeMissingSymbol(sym, diag) =>
       "native library is missing symbol: " + sym + "\n" + diag
     WgpuVulkanInterop(message) => "Vulkan interop: " + message
+    WgpuCoreAdopt(message) => "core adoption: " + message
     WgpuRequestAdapterFailed(status) => {
       let detail = last_request_adapter_message()
       let base = "wgpuInstanceRequestAdapter failed (status=" +
