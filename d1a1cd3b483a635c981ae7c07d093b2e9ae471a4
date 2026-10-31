@@ -1,0 +1,20 @@
+README.mbt.md
+  h_03360edcd9e88f 14,19-34,41-45
+build.js
+  h_03360edcd9e88f 180-283,287-289,297-298,300-303,305-346,348-352,354-383,385-391,393,395-402
+src/c/wgpu_stub_descs_pipelines.c
+  h_03360edcd9e88f 2934-2936,2985-2987,3172-3174,3239-3241,3453-3455
+src/tests/wgpu_render_depth_test.mbt
+  h_03360edcd9e88f 556-615
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d1a1cd3b483a635c981ae7c07d093b2e9ae471a4",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}

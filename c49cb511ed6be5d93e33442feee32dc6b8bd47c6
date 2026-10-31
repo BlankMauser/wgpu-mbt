@@ -1,0 +1,24 @@
+src/c/moon.pkg
+  h_03360edcd9e88f 17,28
+src/c/raw_vk_interop.mbt
+  h_03360edcd9e88f 1-76
+src/c/wgpu_stub_vk_interop.c
+  h_03360edcd9e88f 1-166
+src/moon.pkg
+  h_03360edcd9e88f 6,31-32
+src/wgpu_vk_interop.mbt
+  h_03360edcd9e88f 1-181
+src/wgpu_vk_interop_wbtest.mbt
+  h_03360edcd9e88f 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c49cb511ed6be5d93e33442feee32dc6b8bd47c6",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}

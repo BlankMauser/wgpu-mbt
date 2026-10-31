@@ -1,0 +1,16 @@
+src/c/moon.pkg
+  h_03360edcd9e88f 29-32
+src/moon.pkg
+  h_03360edcd9e88f 11-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a59b21c8717fff366c09bd80bd27457464f33025",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}

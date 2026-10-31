@@ -1,0 +1,29 @@
+README.mbt.md
+  s_ee56707a139ec4::t_67c97005498d15 9,16
+scripts/wgpu_native_release.js
+  s_ee56707a139ec4::t_c037a873057356 11-12
+src/c/raw_vk_interop.mbt
+  s_ee56707a139ec4::t_c2a9dfbb40be0f 66-71
+src/c/wgpu_dynload.c
+  s_ee56707a139ec4::t_ff175a923bf37d 159,182-184
+src/c/wgpu_stub_vk_interop.c
+  s_ee56707a139ec4::t_bc325a69265572 46-47,55,162-169
+src/wgpu_types.mbt
+  s_ee56707a139ec4::t_bbac9899c8e093 545-546,588
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "315f4421c4a3725ce2c988b25cf081520322ffd7",
+  "prompts": {},
+  "sessions": {
+    "s_ee56707a139ec4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a17aa3-f9ab-71b2-81ea-fc2b1b39b5b5",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
