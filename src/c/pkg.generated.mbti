@@ -876,6 +876,8 @@ pub fn instance_get_wgsl_language_features_safe(WGPUInstance, WGPUSupportedWGSLL
 
 pub fn instance_has_wgsl_language_feature_safe(WGPUInstance, WGPUWGSLLanguageFeatureName) -> Bool
 
+pub fn instance_is_null(WGPUInstance) -> Bool
+
 pub fn instance_process_events(WGPUInstance) -> Unit
 
 pub fn instance_release(WGPUInstance) -> Unit
@@ -1501,6 +1503,8 @@ pub fn texture_get_sample_count_u32(WGPUTexture) -> UInt
 pub fn texture_get_usage_u64(WGPUTexture) -> UInt64
 
 pub fn texture_get_width_u32(WGPUTexture) -> UInt
+
+pub fn texture_is_null(WGPUTexture) -> Bool
 
 pub fn texture_release(WGPUTexture) -> Unit
 

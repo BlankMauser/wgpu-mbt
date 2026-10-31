@@ -26,14 +26,16 @@ fn require_core_adoption() -> Unit raise WgpuError {
 }
 
 ///|
+/// The message wgpu-native left for the last refused call: one read into a
+/// buffer big enough for any message (wgpu-native truncates, and returns the
+/// full length).
 fn core_error(what : String) -> WgpuError {
-  let n = @c.core_last_error(Bytes::make(0, b'\x00'), 0UL)
-  if n == 0UL {
+  let buf = Bytes::make(1024, b'\x00')
+  let n = @c.core_last_error(buf, 1024UL).to_int()
+  if n == 0 {
     return WgpuCoreAdopt("\{what} failed")
   }
-  let buf = Bytes::make(n.to_int(), b'\x00')
-  ignore(@c.core_last_error(buf, n))
-  WgpuCoreAdopt(@utf8.decode_lossy(buf[:]))
+  WgpuCoreAdopt(@utf8.decode_lossy(buf[:n.min(1024)]))
 }
 
 ///|
@@ -43,7 +45,7 @@ fn core_error(what : String) -> WgpuError {
 pub fn Instance::from_core(global : UInt64) -> Instance raise WgpuError {
   require_core_adoption()
   let raw = @c.core_create_instance(global)
-  if @c.vk_instance_is_null(raw) {
+  if @c.instance_is_null(raw) {
     raise core_error("wgpuCreateInstanceFromCoreExt")
   }
   { raw, }
@@ -81,9 +83,11 @@ pub fn Adapter::device_from_core(
 }
 
 ///|
-/// The host's 2D texture (1 mip, 1 sample) as a texture of `self`. `usage` and
-/// `format` must be the texture's own (wgpu-core cannot report them back).
-/// A texture that is gone or destroyed raises.
+/// The host's texture as a texture of `self`. Limit: only 2D, 1 mip level, 1
+/// sample, 1 layer can be described (the descriptor is built here from
+/// `width`, `height`, `format` and `usage`; wgpu-native's handle answers its
+/// getters from it, wgpu-core cannot report them back). `usage` and `format`
+/// must be the texture's own. A texture that is gone or destroyed raises.
 pub fn Device::texture_from_core(
   self : Device,
   texture_id : UInt64,
@@ -101,7 +105,7 @@ pub fn Device::texture_from_core(
     format.to_u32(),
     usage.to_u64(),
   )
-  if @c.vk_texture_is_null(raw) {
+  if @c.texture_is_null(raw) {
     raise core_error("wgpuDeviceAdoptTextureExt")
   }
   { raw, }
