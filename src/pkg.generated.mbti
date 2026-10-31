@@ -461,6 +461,8 @@ pub const LIMIT_U64_UNDEFINED : UInt64 = 0xFFFFFFFFFFFFFFFF
 
 pub const LOAD_OP_CLEAR : UInt = 0x00000002
 
+pub const LOAD_OP_DONT_CARE : UInt = 0x00030001
+
 pub const LOAD_OP_FORCE32 : UInt = 0x7FFFFFFF
 
 pub const LOAD_OP_LOAD : UInt = 0x00000001
@@ -1409,6 +1411,12 @@ pub fn get_instance_capabilities() -> InstanceCapabilities
 
 pub fn get_version() -> UInt
 
+pub fn has_core_adoption() -> Bool
+
+pub fn has_load_op_dont_care() -> Bool
+
+pub fn has_vulkan_interop() -> Bool
+
 pub fn last_request_adapter_message() -> String
 
 pub fn last_request_device_message() -> String
@@ -1531,6 +1539,8 @@ pub suberror WgpuError {
   WgpuNativeMissingSymbol(String, String)
   WgpuRequestAdapterFailed(UInt)
   WgpuRequestDeviceFailed(UInt)
+  WgpuVulkanInterop(String)
+  WgpuCoreAdopt(String)
 }
 pub fn WgpuError::message(Self) -> String
 
@@ -1540,6 +1550,8 @@ pub struct Adapter {
 }
 pub fn Adapter::add_ref(Self) -> Self
 pub fn Adapter::add_ref_raw(Self) -> Unit
+pub fn Adapter::device_from_core(Self, UInt64, UInt64) -> Device raise WgpuError
+pub fn Adapter::device_from_vulkan(Self, VulkanHandles, features? : Array[UInt]) -> Device raise WgpuError
 pub fn Adapter::get_features(Self, @c.WGPUSupportedFeaturesPtr) -> Unit
 pub fn Adapter::get_info(Self, @c.WGPUAdapterInfoPtr) -> @c.WGPUStatus
 pub fn Adapter::get_limits(Self, @c.WGPULimitsPtr) -> @c.WGPUStatus
@@ -1770,6 +1782,7 @@ pub fn Buffer::destroy_raw(Self) -> Unit
 pub fn Buffer::get_map_state(Self) -> @c.WGPUBufferMapState
 pub fn Buffer::get_size(Self) -> UInt64
 pub fn Buffer::get_usage(Self) -> UInt64
+pub fn Buffer::map_read_begin(Self, UInt64, UInt64) -> PendingMapRead raise BufferSyncError
 pub fn Buffer::map_read_sync(Self, Instance, UInt64, UInt64) -> Bytes
 pub fn Buffer::map_read_sync_or_raise(Self, Instance, UInt64, UInt64) -> Bytes raise BufferSyncError
 pub fn Buffer::map_write_sync(Self, Instance, UInt64, Bytes) -> Unit
@@ -1859,6 +1872,7 @@ pub fn CommandEncoder::release_raw(Self) -> Unit
 pub fn CommandEncoder::resolve_query_set(Self, QuerySet, UInt, UInt, Buffer, UInt64) -> Unit
 pub fn CommandEncoder::resolve_query_set_raw(Self, QuerySet, UInt, UInt, Buffer, UInt64) -> Unit
 pub fn CommandEncoder::set_label(Self, String) -> Unit
+pub fn CommandEncoder::transition_texture(Self, Texture, UInt64) -> Unit raise WgpuError
 pub fn CommandEncoder::write_timestamp(Self, QuerySet, UInt) -> Unit
 pub fn CommandEncoder::write_timestamp_raw(Self, QuerySet, UInt) -> Unit
 
@@ -1936,6 +1950,7 @@ pub fn ComputePipelineDescBuilder::finish_descriptor_ptr(Self) -> @c.WGPUCompute
 pub fn ComputePipelineDescBuilder::free(Self) -> Unit
 pub fn ComputePipelineDescBuilder::last_error(Self) -> ComputePipelineDescError
 pub fn ComputePipelineDescBuilder::new(ShaderModule, layout? : PipelineLayout) -> Self raise ComputePipelineDescError
+pub fn ComputePipelineDescBuilder::set_constant(Self, String, Double) -> Unit raise ComputePipelineDescError
 pub fn ComputePipelineDescBuilder::set_entry_point(Self, String) -> Unit raise ComputePipelineDescError
 
 pub struct Device {
@@ -2083,6 +2098,7 @@ pub fn Device::has_feature_native_vertex_attribute64bit(Self) -> Bool
 pub fn Device::has_feature_native_vertex_writable_storage(Self) -> Bool
 pub fn Device::has_feature_timestamp_query(Self) -> Bool
 pub fn Device::has_feature_u32(Self, UInt) -> Bool
+pub fn Device::import_vulkan_image(Self, UInt64, UInt, UInt, TextureFormat, TextureUsage, initial_state~ : UInt64) -> Texture raise WgpuError
 pub fn Device::info_adapter_type_u32(Self) -> UInt
 pub fn Device::info_architecture(Self) -> String
 pub fn Device::info_backend_type_u32(Self) -> UInt
@@ -2147,6 +2163,7 @@ pub fn Device::supports_known_rust_features_u64(Self, UInt64) -> Bool
 pub fn Device::supports_read_only_storage_buffer_binding(Self, UInt) -> Bool
 pub fn Device::supports_rust_features_u64(Self, UInt64) -> Bool
 pub fn Device::take_lost_reason(Self) -> UInt
+pub fn Device::texture_from_core(Self, UInt64, UInt, UInt, TextureFormat, TextureUsage) -> Texture raise WgpuError
 pub fn Device::unknown_rust_features_u64(Self, UInt64) -> UInt64
 pub fn Device::wait_lost_reason_sync(Self, Instance) -> UInt
 
@@ -2172,10 +2189,16 @@ pub fn GlobalReport::hub_devices_element_size(Self) -> UInt64
 pub fn GlobalReport::hub_devices_num_allocated(Self) -> UInt64
 pub fn GlobalReport::hub_devices_num_kept_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_devices_num_released_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_pipeline_caches_num_kept_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_pipeline_caches_num_released_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_pipeline_layouts_num_kept_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_pipeline_layouts_num_released_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_query_sets_num_kept_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_query_sets_num_released_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_queues_num_kept_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_queues_num_released_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_render_bundles_num_kept_from_user(Self) -> UInt64
+pub fn GlobalReport::hub_render_bundles_num_released_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_render_pipelines_num_kept_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_render_pipelines_num_released_from_user(Self) -> UInt64
 pub fn GlobalReport::hub_samplers_num_kept_from_user(Self) -> UInt64
@@ -2195,6 +2218,8 @@ pub fn GlobalReport::surfaces_num_released_from_user(Self) -> UInt64
 pub struct Instance {
   raw : @c.WGPUInstance
 }
+pub fn Instance::adapter_from_core(Self, UInt64) -> Adapter raise WgpuError
+pub fn Instance::adapter_from_vulkan(Self, VulkanHandles) -> Adapter raise WgpuError
 pub fn Instance::add_ref(Self) -> Self
 pub fn Instance::add_ref_raw(Self) -> Unit
 pub fn Instance::create() -> Self raise WgpuError
@@ -2215,9 +2240,12 @@ pub fn Instance::create_with_extras_u32(backends_u64? : UInt64, flags_u32? : UIn
 pub fn Instance::enumerate_adapters(Self, @c.WGPUInstanceEnumerateAdapterOptionsPtr, @c.WGPUAdapterPtr) -> UInt64
 pub fn Instance::enumerate_adapters_count_metal(Self) -> UInt64
 pub fn Instance::enumerate_adapters_count_vulkan(Self) -> UInt64
+pub fn Instance::from_core(UInt64) -> Self raise WgpuError
+pub fn Instance::from_vulkan(VulkanHandles) -> Self raise WgpuError
 pub fn Instance::generate_report(Self) -> GlobalReport
 pub fn Instance::get_wgsl_language_features(Self, @c.WGPUSupportedWGSLLanguageFeaturesPtr) -> @c.WGPUStatus
 pub fn Instance::has_wgsl_language_feature(Self, @c.WGPUWGSLLanguageFeatureName) -> Bool
+pub fn Instance::live_objects(Self) -> String raise WgpuError
 pub fn Instance::process_events(Self) -> Unit
 pub fn Instance::process_events_raw(Self) -> Unit
 pub fn Instance::raw_handle(Self) -> @c.WGPUInstance
@@ -2324,6 +2352,11 @@ pub fn MapMode::from_u64(UInt64) -> Self
 pub fn MapMode::not_equal(Self, Self) -> Bool
 pub fn MapMode::to_u64(Self) -> UInt64
 pub impl Eq for MapMode
+
+pub struct PendingMapRead {
+  // private fields
+}
+pub fn PendingMapRead::finish(Self, Instance) -> Bytes raise BufferSyncError
 
 pub struct PipelineLayout {
   raw : @c.WGPUPipelineLayout
@@ -2540,6 +2573,7 @@ pub fn RenderPipelineDescBuilder::free(Self) -> Unit
 pub fn RenderPipelineDescBuilder::last_error(Self) -> RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::new(ShaderModule, layout? : PipelineLayout) -> Self raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_blend_components(Self, UInt, UInt, UInt, UInt, UInt, UInt) -> Unit raise RenderPipelineDescError
+pub fn RenderPipelineDescBuilder::set_color_target_blend_at(Self, UInt, UInt, UInt, UInt, UInt, UInt, UInt) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_color_target_count(Self, UInt) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_color_target_format(Self, TextureFormat) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_color_target_format_at(Self, UInt, TextureFormat) -> Unit raise RenderPipelineDescError
@@ -2547,6 +2581,7 @@ pub fn RenderPipelineDescBuilder::set_color_target_unused_at(Self, UInt) -> Unit
 pub fn RenderPipelineDescBuilder::set_color_target_write_mask(Self, UInt64) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_color_target_write_mask_at(Self, UInt, UInt64) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_conservative_rasterization(Self, Bool) -> Unit raise RenderPipelineDescError
+pub fn RenderPipelineDescBuilder::set_constant(Self, String, Double) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_cull_mode_u32(Self, UInt) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_depth_stencil(Self, TextureFormat, depth_write_enabled? : Bool, depth_compare_u32? : UInt, depth_bias? : Int, depth_bias_slope_scale? : Float, depth_bias_clamp? : Float) -> Unit raise RenderPipelineDescError
 pub fn RenderPipelineDescBuilder::set_entry_points(Self, String, String) -> Unit raise RenderPipelineDescError
@@ -2741,6 +2776,39 @@ pub fn TextureView::raw_handle(Self) -> @c.WGPUTextureView
 pub fn TextureView::release(Self) -> Unit
 pub fn TextureView::release_raw(Self) -> Unit
 pub fn TextureView::set_label(Self, String) -> Unit
+
+pub(all) struct VulkanHandles {
+  get_instance_proc_addr : UInt64
+  instance : UInt64
+  instance_api_version : UInt
+  instance_extensions : Array[String]
+  physical_device : UInt64
+  device : UInt64
+  device_extensions : Array[String]
+  queue_family_index : UInt
+  queue_index : UInt
+}
+
+pub struct VulkanHandoff {
+  raw : UInt64
+}
+pub fn VulkanHandoff::features(Self) -> Array[UInt]
+pub fn VulkanHandoff::format(Self) -> TextureFormat
+pub fn VulkanHandoff::from_ptr(UInt64) -> Self raise WgpuError
+pub fn VulkanHandoff::handles(Self) -> VulkanHandles
+pub fn VulkanHandoff::has_lock(Self) -> Bool
+pub fn VulkanHandoff::height(Self) -> UInt
+pub fn VulkanHandoff::image(Self) -> UInt64
+pub fn VulkanHandoff::queue_lock(Self) -> VulkanQueueLock?
+pub fn VulkanHandoff::state(Self) -> UInt64
+pub fn VulkanHandoff::usage(Self) -> TextureUsage
+pub fn VulkanHandoff::width(Self) -> UInt
+
+pub struct VulkanQueueLock {
+  raw : UInt64
+}
+pub fn VulkanQueueLock::lock(Self) -> Unit
+pub fn VulkanQueueLock::unlock(Self) -> Unit
 
 pub struct WaitAnyResult {
   status : UInt

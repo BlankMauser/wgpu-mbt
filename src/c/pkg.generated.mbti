@@ -262,6 +262,10 @@ pub fn buffer_get_map_state_tracked(WGPUBuffer) -> WGPUBufferMapState
 
 pub fn buffer_get_size(WGPUBuffer) -> UInt64
 
+pub fn buffer_map_read_begin(WGPUBuffer, UInt64, UInt64) -> OpaquePtr
+
+pub fn buffer_map_read_finish(WGPUInstance, OpaquePtr, WGPUBuffer, UInt64, UInt64, Bytes, UInt64) -> Bool
+
 pub fn buffer_map_read_sync(WGPUInstance, WGPUBuffer, UInt64, UInt64, Bytes, UInt64) -> Bool
 
 pub fn buffer_map_state_u32(WGPUBufferMapState) -> UInt
@@ -430,6 +434,8 @@ pub fn compute_pipeline_desc_builder_last_error_u32(ComputePipelineDescBuilderOb
 
 pub fn compute_pipeline_desc_builder_new(WGPUPipelineLayout, WGPUShaderModule) -> ComputePipelineDescBuilderObj
 
+pub fn compute_pipeline_desc_builder_set_constant_utf8(ComputePipelineDescBuilderObj, Bytes, UInt64, Double) -> UInt
+
 pub fn compute_pipeline_desc_builder_set_entry_point_utf8(ComputePipelineDescBuilderObj, Bytes, UInt64) -> UInt
 
 pub fn compute_pipeline_desc_builder_take_descriptor(ComputePipelineDescBuilderObj) -> WGPUComputePipelineDescriptorPtr
@@ -449,6 +455,18 @@ pub fn compute_pipeline_descriptor_set_entry_point_utf8(WGPUComputePipelineDescr
 pub fn compute_pipeline_release(WGPUComputePipeline) -> Unit
 
 pub fn compute_pipeline_set_label_utf8(WGPUComputePipeline, Bytes, UInt64) -> Unit
+
+pub fn core_adopt_adapter(WGPUInstance, UInt64) -> WGPUAdapter
+
+pub fn core_adopt_available() -> Bool
+
+pub fn core_adopt_device(WGPUAdapter, UInt64, UInt64) -> WGPUDevice
+
+pub fn core_adopt_texture(WGPUDevice, UInt64, UInt, UInt, UInt, UInt64) -> WGPUTexture
+
+pub fn core_create_instance(UInt64) -> WGPUInstance
+
+pub fn core_last_error(Bytes, UInt64) -> UInt64
 
 pub fn create_instance() -> WGPUInstance
 
@@ -764,13 +782,25 @@ pub fn global_report_hub_devices_num_kept_from_user(WGPUGlobalReportPtr) -> UInt
 
 pub fn global_report_hub_devices_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
 
+pub fn global_report_hub_pipeline_caches_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
+
+pub fn global_report_hub_pipeline_caches_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
+
 pub fn global_report_hub_pipeline_layouts_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
 
 pub fn global_report_hub_pipeline_layouts_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
 
+pub fn global_report_hub_query_sets_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
+
+pub fn global_report_hub_query_sets_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
+
 pub fn global_report_hub_queues_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
 
 pub fn global_report_hub_queues_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
+
+pub fn global_report_hub_render_bundles_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
+
+pub fn global_report_hub_render_bundles_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
 
 pub fn global_report_hub_render_pipelines_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
 
@@ -799,6 +829,8 @@ pub fn global_report_surfaces_num_allocated(WGPUGlobalReportPtr) -> UInt64
 pub fn global_report_surfaces_num_kept_from_user(WGPUGlobalReportPtr) -> UInt64
 
 pub fn global_report_surfaces_num_released_from_user(WGPUGlobalReportPtr) -> UInt64
+
+pub fn has_load_op_dont_care() -> Bool
 
 pub fn index_format_uint16() -> WGPUIndexFormat
 
@@ -1236,6 +1268,8 @@ pub fn render_pipeline_desc_builder_new(WGPUPipelineLayout, WGPUShaderModule) ->
 
 pub fn render_pipeline_desc_builder_set_blend_components(RenderPipelineDescBuilderObj, UInt, UInt, UInt, UInt, UInt, UInt) -> UInt
 
+pub fn render_pipeline_desc_builder_set_color_target_blend_at(RenderPipelineDescBuilderObj, UInt, UInt, UInt, UInt, UInt, UInt, UInt) -> UInt
+
 pub fn render_pipeline_desc_builder_set_color_target_count(RenderPipelineDescBuilderObj, UInt) -> UInt
 
 pub fn render_pipeline_desc_builder_set_color_target_format(RenderPipelineDescBuilderObj, UInt) -> UInt
@@ -1249,6 +1283,8 @@ pub fn render_pipeline_desc_builder_set_color_target_write_mask(RenderPipelineDe
 pub fn render_pipeline_desc_builder_set_color_target_write_mask_at(RenderPipelineDescBuilderObj, UInt, UInt64) -> UInt
 
 pub fn render_pipeline_desc_builder_set_conservative(RenderPipelineDescBuilderObj, Bool) -> UInt
+
+pub fn render_pipeline_desc_builder_set_constant_utf8(RenderPipelineDescBuilderObj, Bytes, UInt64, Double) -> UInt
 
 pub fn render_pipeline_desc_builder_set_cull_mode(RenderPipelineDescBuilderObj, UInt) -> UInt
 
@@ -1483,6 +1519,46 @@ pub fn texture_view_descriptor_u32_new(UInt, UInt, UInt, UInt, UInt, UInt, UInt)
 pub fn texture_view_release(WGPUTextureView) -> Unit
 
 pub fn texture_view_set_label_utf8(WGPUTextureView, Bytes, UInt64) -> Unit
+
+pub fn vk_create_adapter(WGPUInstance, OpaquePtr) -> WGPUAdapter
+
+pub fn vk_create_device(WGPUAdapter, OpaquePtr, FixedArray[UInt], UInt64) -> WGPUDevice
+
+pub fn vk_create_instance(OpaquePtr) -> WGPUInstance
+
+pub fn vk_handles_free(OpaquePtr) -> Unit
+
+pub fn vk_handles_new(UInt64, UInt64, UInt, Bytes, UInt64, UInt64, UInt64, Bytes, UInt64, UInt, UInt) -> OpaquePtr
+
+pub fn vk_handoff_features(UInt64, FixedArray[UInt], UInt64) -> UInt64
+
+pub fn vk_handoff_names(UInt64, Int, Bytes, UInt64) -> UInt64
+
+pub fn vk_handoff_queue_lock(UInt64) -> UInt64
+
+pub fn vk_handoff_u64(UInt64, Int) -> UInt64
+
+pub fn vk_handoff_valid(UInt64) -> Bool
+
+pub fn vk_import_image(WGPUDevice, UInt64, UInt, UInt, UInt, UInt64, UInt64) -> WGPUTexture
+
+pub fn vk_instance_is_null(WGPUInstance) -> Bool
+
+pub fn vk_interop_available() -> Bool
+
+pub fn vk_last_error(Bytes, UInt64) -> UInt64
+
+pub fn vk_live_objects(WGPUInstance, Bytes, UInt64) -> UInt64
+
+pub fn vk_ptr_is_null(OpaquePtr) -> Bool
+
+pub fn vk_queue_lock_lock(UInt64) -> Unit
+
+pub fn vk_queue_lock_unlock(UInt64) -> Unit
+
+pub fn vk_texture_is_null(WGPUTexture) -> Bool
+
+pub fn vk_transition_texture(WGPUCommandEncoder, WGPUTexture, UInt64) -> Bool
 
 pub fn wgpuAdapterAddRef(WGPUAdapter) -> Unit
 
