@@ -1,0 +1,36 @@
+README.mbt.md
+  h_03360edcd9e88f 9,16
+deps/wgpu-native
+  h_03360edcd9e88f 1
+scripts/wgpu_native_release.js
+  h_03360edcd9e88f 11-12
+src/c/moon.pkg
+  h_03360edcd9e88f 18,30
+src/c/pkg.generated.mbti
+  h_03360edcd9e88f 265-268,437-438,459-470,785-788,793-796,801-804,833-834,1271-1272,1287-1288,1523-1562
+src/c/raw_adopt_core.mbt
+  h_03360edcd9e88f 1-40
+src/c/wgpu_dynload.c
+  h_03360edcd9e88f 156-168,191-207
+src/c/wgpu_stub_adopt_core.c
+  h_03360edcd9e88f 1-76
+src/moon.pkg
+  h_03360edcd9e88f 48
+src/pkg.generated.mbti
+  h_03360edcd9e88f 464-465,1414-1419,1542-1543,1553-1554,1785,1875,1953,2101,2166,2192-2193,2196-2197,2200-2201,2221-2222,2243-2244,2248,2356-2360,2576,2584,2780-2812
+src/wgpu_adopt_core.mbt
+  h_03360edcd9e88f 1-108
+src/wgpu_types.mbt
+  h_03360edcd9e88f 547-548,591
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "13ca1f7420754fdc19696cf2382c63dffc7f2a89",
+  "prompts": {},
+  "humans": {
+    "h_03360edcd9e88f": {
+      "author": "BlankMauser <thomasluvan@gmail.com>"
+    }
+  }
+}
