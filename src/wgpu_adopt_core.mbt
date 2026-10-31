@@ -68,7 +68,10 @@ pub fn Instance::adapter_from_core(
 
 ///|
 /// The host's device and queue. Features and limits are the host's own. A
-/// device that is lost, not on this adapter, or an id that is not live raises.
+/// device that is lost, not on this adapter, a queue that is not its own, or an id
+/// that is not live raises. The device gets this layer's device-lost and
+/// uncaptured-error callbacks (as every device it opens does), so neither aborts
+/// the process.
 pub fn Adapter::device_from_core(
   self : Adapter,
   device_id : UInt64,

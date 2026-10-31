@@ -14,7 +14,14 @@
 
 typedef WGPUInstance (*pfn_core_instance)(const void *);
 typedef WGPUAdapter (*pfn_core_adapter)(WGPUInstance, uint64_t);
-typedef WGPUDevice (*pfn_core_device)(WGPUAdapter, uint64_t, uint64_t);
+typedef WGPUDevice (*pfn_core_device)(WGPUAdapter, uint64_t, uint64_t, WGPUDeviceDescriptor const *);
+
+// The callbacks every device this layer opens gets (wgpu_stub_helpers_sync.c): without them
+// wgpu-native's defaults treat an uncaptured error or a device loss as fatal (a panic).
+void mbt_uncaptured_error_noop_cb(WGPUDevice const *device, WGPUErrorType type, WGPUStringView message,
+                                  void *userdata1, void *userdata2);
+void mbt_device_lost_cb(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message,
+                        void *userdata1, void *userdata2);
 typedef WGPUTexture (*pfn_core_texture)(WGPUDevice, uint64_t, WGPUTextureDescriptor const *);
 typedef size_t (*pfn_core_error)(char *, size_t);
 
@@ -48,7 +55,21 @@ WGPUAdapter mbt_wgpu_core_adapter(WGPUInstance instance, uint64_t adapter_id) {
 WGPUDevice mbt_wgpu_core_device(WGPUAdapter adapter, uint64_t device_id, uint64_t queue_id) {
   pfn_core_device f = (pfn_core_device)mbt_wgpu_optional_sym(MBT_CORE_SYMS[2]);
   if (!f || !adapter) return NULL;
-  return f(adapter, device_id, queue_id);
+  WGPUDeviceDescriptor desc = WGPU_DEVICE_DESCRIPTOR_INIT;
+  desc.deviceLostCallbackInfo = (WGPUDeviceLostCallbackInfo){
+      .nextInChain = NULL,
+      .mode = WGPUCallbackMode_AllowSpontaneous,
+      .callback = mbt_device_lost_cb,
+      .userdata1 = NULL,
+      .userdata2 = NULL,
+  };
+  desc.uncapturedErrorCallbackInfo = (WGPUUncapturedErrorCallbackInfo){
+      .nextInChain = NULL,
+      .callback = mbt_uncaptured_error_noop_cb,
+      .userdata1 = NULL,
+      .userdata2 = NULL,
+  };
+  return f(adapter, device_id, queue_id, &desc);
 }
 
 WGPUTexture mbt_wgpu_core_texture(WGPUDevice device, uint64_t texture_id, uint32_t width,
