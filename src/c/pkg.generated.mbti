@@ -266,6 +266,10 @@ pub fn buffer_map_read_begin(WGPUBuffer, UInt64, UInt64) -> OpaquePtr
 
 pub fn buffer_map_read_finish(WGPUInstance, OpaquePtr, WGPUBuffer, UInt64, UInt64, Bytes, UInt64) -> Bool
 
+pub fn buffer_map_read_finish_into(WGPUInstance, OpaquePtr, WGPUBuffer, UInt64, UInt64, UInt64, FixedArray[Byte], UInt64, UInt64) -> Bool
+
+pub fn buffer_map_read_ready(WGPUInstance, OpaquePtr) -> Bool
+
 pub fn buffer_map_read_sync(WGPUInstance, WGPUBuffer, UInt64, UInt64, Bytes, UInt64) -> Bool
 
 pub fn buffer_map_state_u32(WGPUBufferMapState) -> UInt

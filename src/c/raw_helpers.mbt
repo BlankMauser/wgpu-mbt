@@ -1750,6 +1750,22 @@ pub extern "C" fn buffer_map_read_finish(
 ) -> Bool = "mbt_wgpu_buffer_map_read_finish"
 
 ///|
+/// `buffer_map_read_finish` copying `want` bytes from `skip` into the mapped
+/// range straight into `out[at:]` (the caller's array).
+#borrow(out)
+pub extern "C" fn buffer_map_read_finish_into(
+  instance : Instance,
+  pending : OpaquePtr,
+  buffer : Buffer,
+  offset : UInt64,
+  size : UInt64,
+  skip : UInt64,
+  out : FixedArray[Byte],
+  at : UInt64,
+  want : UInt64,
+) -> Bool = "mbt_wgpu_buffer_map_read_finish_into"
+
+///|
 #borrow(out)
 pub extern "C" fn buffer_map_read_sync(
   instance : Instance,
