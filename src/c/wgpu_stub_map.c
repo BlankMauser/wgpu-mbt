@@ -240,6 +240,18 @@ int32_t mbt_wgpu_buffer_map_read_finish(WGPUInstance instance, void *pending, WG
   return true;
 }
 
+/* Non-blocking: processes the instance's events once and reports whether the
+   map begun by mbt_wgpu_buffer_map_read_begin has completed (successfully or
+   not), so mbt_wgpu_buffer_map_read_finish will not wait. */
+int32_t mbt_wgpu_buffer_map_read_ready(WGPUInstance instance, void *pending) {
+  mbt_pending_map_read *p = (mbt_pending_map_read *)pending;
+  if (!p) return true;
+  if (p->map.status == 0) {
+    wgpuInstanceProcessEvents(instance);
+  }
+  return p->map.status != 0;
+}
+
 int32_t mbt_wgpu_buffer_map_write_sync(WGPUInstance instance, WGPUBuffer buffer,
                                        uint64_t offset, const uint8_t *data,
                                        uint64_t data_len) {

@@ -1729,6 +1729,14 @@ pub extern "C" fn buffer_map_read_begin(
 ) -> OpaquePtr = "mbt_wgpu_buffer_map_read_begin"
 
 ///|
+/// Whether the map begun by `buffer_map_read_begin` has completed, without
+/// waiting (processes the instance's events once).
+pub extern "C" fn buffer_map_read_ready(
+  instance : Instance,
+  pending : OpaquePtr,
+) -> Bool = "mbt_wgpu_buffer_map_read_ready"
+
+///|
 /// The second half: waits, copies, frees `pending`. Exactly once per begin.
 #borrow(out)
 pub extern "C" fn buffer_map_read_finish(

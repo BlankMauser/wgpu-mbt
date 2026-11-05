@@ -231,6 +231,18 @@ pub fn Buffer::map_read_begin(
 }
 
 ///|
+/// Whether the map has completed (successfully or not), so `finish` will not
+/// wait. Never blocks: it processes the instance's events once. Lets a frame
+/// loop collect GPU results (timestamps, positions) when they arrive instead
+/// of waiting for them.
+pub fn PendingMapRead::ready(self : PendingMapRead, instance : Instance) -> Bool {
+  if self.finished {
+    return true
+  }
+  @c.buffer_map_read_ready(instance.raw, self.raw)
+}
+
+///|
 /// Waits for the mapping (no queue operation) and returns the bytes; the
 /// buffer stays mapped, as after `map_read_sync_or_raise`.
 pub fn PendingMapRead::finish(
