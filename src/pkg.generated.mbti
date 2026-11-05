@@ -2357,6 +2357,8 @@ pub struct PendingMapRead {
   // private fields
 }
 pub fn PendingMapRead::finish(Self, Instance) -> Bytes raise BufferSyncError
+pub fn PendingMapRead::finish_into(Self, Instance, FixedArray[Byte], at? : Int) -> Unit raise BufferSyncError
+pub fn PendingMapRead::ready(Self, Instance) -> Bool
 
 pub struct PipelineLayout {
   raw : @c.WGPUPipelineLayout

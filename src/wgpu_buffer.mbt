@@ -270,6 +270,39 @@ pub fn PendingMapRead::finish(
 }
 
 ///|
+/// `finish` into the caller's array: waits for the mapping, copies the
+/// requested bytes to `out[at:]`, allocates nothing. The buffer stays mapped.
+/// For a frame loop that reads back every frame into memory it keeps.
+pub fn PendingMapRead::finish_into(
+  self : PendingMapRead,
+  instance : Instance,
+  out : FixedArray[Byte],
+  at? : Int = 0,
+) -> Unit raise BufferSyncError {
+  if self.finished {
+    raise BufferSyncFailed("buffer_map_read_finish: finished twice")
+  }
+  if at < 0 || at.to_uint64() + self.want > out.length().to_uint64() {
+    raise BufferSyncFailed("buffer_map_read_finish_into: the array is too short")
+  }
+  self.finished = true
+  let ok = @c.buffer_map_read_finish_into(
+    instance.raw,
+    self.raw,
+    self.buffer.raw,
+    self.offset,
+    self.size,
+    self.prefix,
+    out,
+    at.to_uint64(),
+    self.want,
+  )
+  if !ok {
+    raise BufferSyncFailed("buffer_map_read_finish_into")
+  }
+}
+
+///|
 pub fn Buffer::map_write_sync(
   self : Buffer,
   instance : Instance,

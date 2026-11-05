@@ -240,6 +240,28 @@ int32_t mbt_wgpu_buffer_map_read_finish(WGPUInstance instance, void *pending, WG
   return true;
 }
 
+/* mbt_wgpu_buffer_map_read_finish, but copies only `want` bytes starting
+   `skip` bytes into the mapped range, straight into the caller's memory (no
+   intermediate buffer). */
+int32_t mbt_wgpu_buffer_map_read_finish_into(WGPUInstance instance, void *pending,
+                                             WGPUBuffer buffer, uint64_t offset,
+                                             uint64_t size, uint64_t skip, uint8_t *out,
+                                             uint64_t at, uint64_t want) {
+  mbt_pending_map_read *p = (mbt_pending_map_read *)pending;
+  if (!p) return false;
+  while (p->map.status == 0) {
+    wgpuInstanceProcessEvents(instance);
+  }
+  int32_t ok = p->map.status == WGPUMapAsyncStatus_Success && skip + want <= size;
+  free(p);
+  if (!ok) return false;
+  const uint8_t *mapped = (const uint8_t *)wgpuBufferGetConstMappedRange(buffer, offset, size);
+  if (!mapped) return false;
+  memcpy(out + at, mapped + skip, (size_t)want);
+  mbt_buffer_track_set_state(buffer, WGPUBufferMapState_Mapped);
+  return true;
+}
+
 /* Non-blocking: processes the instance's events once and reports whether the
    map begun by mbt_wgpu_buffer_map_read_begin has completed (successfully or
    not), so mbt_wgpu_buffer_map_read_finish will not wait. */
