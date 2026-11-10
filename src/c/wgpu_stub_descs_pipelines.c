@@ -4409,11 +4409,31 @@ void mbt_wgpu_render_pass_set_bind_group0(WGPURenderPassEncoder pass,
 // Generic-ish BindGroupLayout / BindGroup builders
 // -----------------------------------------------------------------------------
 
+// TLAS bindings (BlankMauser/wgpu-native fork, ffi/wgpu_ray_query.h; layouts
+// must match it). A builder with any goes through the fork's creation calls.
+#define MBT_MAX_TLAS_BINDINGS 8u
+typedef struct mbt_WGPUTlasLayoutEntryExt {
+  uint32_t binding;
+  WGPUShaderStage visibility;
+  WGPUBool vertexReturn;
+} mbt_WGPUTlasLayoutEntryExt;
+typedef struct mbt_WGPUTlasBindingExt {
+  uint32_t binding;
+  void *tlas;
+} mbt_WGPUTlasBindingExt;
+typedef WGPUBindGroupLayout (*pfn_layout_tlas)(WGPUDevice, const WGPUBindGroupLayoutDescriptor *,
+                                               const mbt_WGPUTlasLayoutEntryExt *, size_t);
+typedef WGPUBindGroup (*pfn_group_tlas)(WGPUDevice, const WGPUBindGroupDescriptor *, const mbt_WGPUTlasBindingExt *,
+                                        size_t);
+void *mbt_wgpu_optional_sym(const char *name);
+
 typedef struct {
   uint64_t capacity;
   uint64_t len;
   WGPUBindGroupLayoutEntry *entries;
   WGPUBindGroupLayoutEntryExtras **extras;
+  uint32_t tlas_len;
+  mbt_WGPUTlasLayoutEntryExt tlas[MBT_MAX_TLAS_BINDINGS];
 } mbt_bind_group_layout_builder_t;
 
 static void mbt_wgpu_bind_group_layout_builder_drop(
@@ -4450,6 +4470,7 @@ void *mbt_wgpu_bind_group_layout_builder_new(uint64_t max_entries) {
   b->len = 0u;
   b->entries = NULL;
   b->extras = NULL;
+  b->tlas_len = 0u;
   if (max_entries != 0u) {
     b->entries = (WGPUBindGroupLayoutEntry *)calloc((size_t)max_entries,
                                                    sizeof(WGPUBindGroupLayoutEntry));
@@ -4761,9 +4782,28 @@ WGPUBindGroupLayout mbt_wgpu_bind_group_layout_builder_finish(WGPUDevice device,
       .entryCount = (size_t)b->len,
       .entries = b->len == 0u ? NULL : b->entries,
   };
-  WGPUBindGroupLayout out = wgpuDeviceCreateBindGroupLayout(device, &desc);
+  WGPUBindGroupLayout out = NULL;
+  if (b->tlas_len != 0u) {
+    pfn_layout_tlas f = (pfn_layout_tlas)mbt_wgpu_optional_sym("wgpuDeviceCreateBindGroupLayoutTlasExt");
+    out = f ? f(device, &desc, b->tlas, (size_t)b->tlas_len) : NULL;
+  } else {
+    out = wgpuDeviceCreateBindGroupLayout(device, &desc);
+  }
+  b->tlas_len = 0u;
   mbt_wgpu_bind_group_layout_builder_drop(b);
   return out;
+}
+
+// A `var name: acceleration_structure` binding; false when the builder is full.
+bool mbt_wgpu_bind_group_layout_builder_add_tlas(void *builder, uint32_t binding, uint64_t visibility,
+                                                 bool vertex_return) {
+  mbt_bind_group_layout_builder_t *b = (mbt_bind_group_layout_builder_t *)builder;
+  if (!b || b->tlas_len >= MBT_MAX_TLAS_BINDINGS) {
+    return false;
+  }
+  b->tlas[b->tlas_len++] =
+      (mbt_WGPUTlasLayoutEntryExt){binding, (WGPUShaderStage)visibility, vertex_return ? 1u : 0u};
+  return true;
 }
 
 typedef struct {
@@ -4771,6 +4811,8 @@ typedef struct {
   uint64_t len;
   WGPUBindGroupEntry *entries;
   WGPUBindGroupEntryExtras **extras;
+  uint32_t tlas_len;
+  mbt_WGPUTlasBindingExt tlas[MBT_MAX_TLAS_BINDINGS];
 } mbt_bind_group_builder_t;
 
 static void mbt_wgpu_bind_group_builder_drop(mbt_bind_group_builder_t *b) {
@@ -4813,6 +4855,7 @@ void *mbt_wgpu_bind_group_builder_new(uint64_t max_entries) {
   b->len = 0u;
   b->entries = NULL;
   b->extras = NULL;
+  b->tlas_len = 0u;
   if (max_entries == 0u) {
     return (void *)b;
   }
@@ -5066,7 +5109,24 @@ WGPUBindGroup mbt_wgpu_bind_group_builder_finish(WGPUDevice device,
       .entryCount = (size_t)b->len,
       .entries = b->len == 0u ? NULL : b->entries,
   };
-  WGPUBindGroup out = wgpuDeviceCreateBindGroup(device, &desc);
+  WGPUBindGroup out = NULL;
+  if (b->tlas_len != 0u) {
+    pfn_group_tlas f = (pfn_group_tlas)mbt_wgpu_optional_sym("wgpuDeviceCreateBindGroupTlasExt");
+    out = f ? f(device, &desc, b->tlas, (size_t)b->tlas_len) : NULL;
+  } else {
+    out = wgpuDeviceCreateBindGroup(device, &desc);
+  }
+  b->tlas_len = 0u;
   mbt_wgpu_bind_group_builder_drop(b);
   return out;
+}
+
+// Binds a TLAS; false when the builder is full.
+bool mbt_wgpu_bind_group_builder_add_tlas(void *builder, uint32_t binding, void *tlas) {
+  mbt_bind_group_builder_t *b = (mbt_bind_group_builder_t *)builder;
+  if (!b || !tlas || b->tlas_len >= MBT_MAX_TLAS_BINDINGS) {
+    return false;
+  }
+  b->tlas[b->tlas_len++] = (mbt_WGPUTlasBindingExt){binding, tlas};
+  return true;
 }

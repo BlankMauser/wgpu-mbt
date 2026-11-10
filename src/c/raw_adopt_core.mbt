@@ -36,5 +36,17 @@ pub extern "C" fn core_adopt_texture(
 ) -> Texture = "mbt_wgpu_core_texture"
 
 ///|
+#borrow(device)
+pub extern "C" fn core_adopt_buffer(
+  device : Device,
+  buffer_id : UInt64,
+  size : UInt64,
+  usage : UInt64,
+) -> Buffer = "mbt_wgpu_core_buffer"
+
+///|
+pub extern "C" fn buffer_is_null(buffer : Buffer) -> Bool = "mbt_wgpu_buffer_is_null"
+
+///|
 #borrow(out)
 pub extern "C" fn core_last_error(out : Bytes, capacity : UInt64) -> UInt64 = "mbt_wgpu_core_last_error"

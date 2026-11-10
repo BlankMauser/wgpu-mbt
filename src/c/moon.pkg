@@ -16,6 +16,7 @@ options(
     "wgpu_stub_map.c",
     "wgpu_stub_vk_interop.c",
     "wgpu_stub_adopt_core.c",
+    "wgpu_stub_ray_query.c",
   ],
   targets: {
     "raw.mbt": [ "native" ],
@@ -28,6 +29,7 @@ options(
     "raw_surface.mbt": [ "native" ],
     "raw_vk_interop.mbt": [ "native" ],
     "raw_adopt_core.mbt": [ "native" ],
+    "raw_ray_query.mbt": [ "native" ],
     "desc_builders.mbt": [ "native" ],
     "handle_aliases.mbt": [ "native" ],
     "webgpu_capi.mbt": [ "native" ],

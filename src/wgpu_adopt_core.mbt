@@ -113,3 +113,22 @@ pub fn Device::texture_from_core(
   }
   { raw, }
 }
+
+///|
+/// The host's buffer as a buffer of `self`. `size` and `usage` must be the
+/// buffer's own (wgpu-native's handle answers its getters from them). Releasing
+/// or destroying the handle leaves the host's buffer alone. A buffer that is gone
+/// raises.
+pub fn Device::buffer_from_core(
+  self : Device,
+  buffer_id : UInt64,
+  size : UInt64,
+  usage : BufferUsage,
+) -> Buffer raise WgpuError {
+  require_core_adoption()
+  let raw = @c.core_adopt_buffer(self.raw, buffer_id, size, usage.to_u64())
+  if @c.buffer_is_null(raw) {
+    raise core_error("wgpuDeviceAdoptBufferExt")
+  }
+  { raw, }
+}

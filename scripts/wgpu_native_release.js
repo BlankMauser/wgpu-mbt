@@ -8,11 +8,13 @@ const os = require('os');
 // release-shaped tree), not a git tag. Needs Rust (cargo) on PATH.
 const SOURCE_BUILD = {
   repo: 'BlankMauser/wgpu-native',
-  tag: 'v30.0.1-lf.2+adopt.1592754',
-  rev: '15927549394be9277b66005fd28d7f140163a25d',
+  tag: 'v30.0.1-lf.3+rq.32c7563',
+  rev: '32c7563bb5741892ea07650ebcb571927368d8b9',
   submodule: 'deps/wgpu-native',
   vkInterop: true,
   loadOpDontCare: true,
+  // ffi/wgpu_ray_query.h: BLAS, TLAS, builds and TLAS bindings.
+  rayQuery: true,
 };
 
 // MBT_WGPU_NATIVE_SOURCE=official: the upstream release download (wgpu 29).
@@ -165,7 +167,7 @@ const USE_OFFICIAL =
 // platform) either way; in source mode the sha256 fields are unused and the
 // pinned submodule commit is the identity instead.
 const SUPPORTED_RELEASE = USE_OFFICIAL
-  ? { ...OFFICIAL_RELEASE, fromSource: false, vkInterop: false, loadOpDontCare: false }
+  ? { ...OFFICIAL_RELEASE, fromSource: false, vkInterop: false, loadOpDontCare: false, rayQuery: false }
   : {
     repo: SOURCE_BUILD.repo,
     tag: SOURCE_BUILD.tag,
@@ -175,6 +177,7 @@ const SUPPORTED_RELEASE = USE_OFFICIAL
     fromSource: true,
     vkInterop: SOURCE_BUILD.vkInterop,
     loadOpDontCare: SOURCE_BUILD.loadOpDontCare,
+    rayQuery: SOURCE_BUILD.rayQuery,
   };
 
 function normalizePlatform(platform = os.platform()) {

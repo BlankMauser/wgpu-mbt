@@ -163,7 +163,23 @@ extern void wgpuCreateInstanceFromCoreExt(void);
 extern void wgpuInstanceAdoptAdapterExt(void);
 extern void wgpuAdapterAdoptDeviceExt(void);
 extern void wgpuDeviceAdoptTextureExt(void);
+extern void wgpuDeviceAdoptBufferExt(void);
 extern void wgpuCoreAdoptLastErrorExt(void);
+#endif
+
+#ifndef MBT_WGPU_STATIC_HAS_RAY_QUERY
+#define MBT_WGPU_STATIC_HAS_RAY_QUERY 0
+#endif
+#if MBT_WGPU_STATIC_HAS_RAY_QUERY
+// BlankMauser/wgpu-native ray queries (wgpu_ray_query.h). Only their addresses
+// are taken here.
+extern void wgpuDeviceCreateBlasExt(void);
+extern void wgpuDeviceCreateTlasExt(void);
+extern void wgpuBlasReleaseExt(void);
+extern void wgpuTlasReleaseExt(void);
+extern void wgpuCommandEncoderBuildAccelerationStructuresExt(void);
+extern void wgpuDeviceCreateBindGroupLayoutTlasExt(void);
+extern void wgpuDeviceCreateBindGroupTlasExt(void);
 #endif
 
 #if MBT_WGPU_STATIC_HAS_VK_INTEROP
@@ -188,6 +204,17 @@ static void *mbt_wgpu_static_known_sym(const char *name) {
     return (void *)wgpuNativeLoadOpDontCare;
   }
 #endif
+#if MBT_WGPU_STATIC_HAS_RAY_QUERY
+  if (strcmp(name, "wgpuDeviceCreateBlasExt") == 0) return (void *)wgpuDeviceCreateBlasExt;
+  if (strcmp(name, "wgpuDeviceCreateTlasExt") == 0) return (void *)wgpuDeviceCreateTlasExt;
+  if (strcmp(name, "wgpuBlasReleaseExt") == 0) return (void *)wgpuBlasReleaseExt;
+  if (strcmp(name, "wgpuTlasReleaseExt") == 0) return (void *)wgpuTlasReleaseExt;
+  if (strcmp(name, "wgpuCommandEncoderBuildAccelerationStructuresExt") == 0) {
+    return (void *)wgpuCommandEncoderBuildAccelerationStructuresExt;
+  }
+  if (strcmp(name, "wgpuDeviceCreateBindGroupLayoutTlasExt") == 0) return (void *)wgpuDeviceCreateBindGroupLayoutTlasExt;
+  if (strcmp(name, "wgpuDeviceCreateBindGroupTlasExt") == 0) return (void *)wgpuDeviceCreateBindGroupTlasExt;
+#endif
 #if MBT_WGPU_STATIC_HAS_ADOPT_CORE
   if (strcmp(name, "wgpuCreateInstanceFromCoreExt") == 0) {
     return (void *)wgpuCreateInstanceFromCoreExt;
@@ -200,6 +227,9 @@ static void *mbt_wgpu_static_known_sym(const char *name) {
   }
   if (strcmp(name, "wgpuDeviceAdoptTextureExt") == 0) {
     return (void *)wgpuDeviceAdoptTextureExt;
+  }
+  if (strcmp(name, "wgpuDeviceAdoptBufferExt") == 0) {
+    return (void *)wgpuDeviceAdoptBufferExt;
   }
   if (strcmp(name, "wgpuCoreAdoptLastErrorExt") == 0) {
     return (void *)wgpuCoreAdoptLastErrorExt;

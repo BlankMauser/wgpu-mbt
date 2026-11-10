@@ -23,6 +23,7 @@ void mbt_uncaptured_error_noop_cb(WGPUDevice const *device, WGPUErrorType type, 
 void mbt_device_lost_cb(WGPUDevice const *device, WGPUDeviceLostReason reason, WGPUStringView message,
                         void *userdata1, void *userdata2);
 typedef WGPUTexture (*pfn_core_texture)(WGPUDevice, uint64_t, WGPUTextureDescriptor const *);
+typedef WGPUBuffer (*pfn_core_buffer)(WGPUDevice, uint64_t, WGPUBufferDescriptor const *);
 typedef size_t (*pfn_core_error)(char *, size_t);
 
 static const char *const MBT_CORE_SYMS[] = {
@@ -31,6 +32,7 @@ static const char *const MBT_CORE_SYMS[] = {
     "wgpuAdapterAdoptDeviceExt",
     "wgpuDeviceAdoptTextureExt",
     "wgpuCoreAdoptLastErrorExt",
+    "wgpuDeviceAdoptBufferExt",
 };
 
 int32_t mbt_wgpu_core_adopt_available(void) {
@@ -87,6 +89,19 @@ WGPUTexture mbt_wgpu_core_texture(WGPUDevice device, uint64_t texture_id, uint32
   td.mipLevelCount = 1;
   td.sampleCount = 1;
   return f(device, texture_id, &td);
+}
+
+int32_t mbt_wgpu_buffer_is_null(WGPUBuffer buffer) { return buffer == NULL; }
+
+// The host's buffer; `size` and `usage` are its own (the handle answers from them).
+WGPUBuffer mbt_wgpu_core_buffer(WGPUDevice device, uint64_t buffer_id, uint64_t size, uint64_t usage) {
+  pfn_core_buffer f = (pfn_core_buffer)mbt_wgpu_optional_sym(MBT_CORE_SYMS[5]);
+  if (!f || !device) return NULL;
+  WGPUBufferDescriptor bd = WGPU_BUFFER_DESCRIPTOR_INIT;
+  bd.label = (WGPUStringView){"core-adopted", WGPU_STRLEN};
+  bd.usage = (WGPUBufferUsage)usage;
+  bd.size = size;
+  return f(device, buffer_id, &bd);
 }
 
 // The last adoption error of this thread: length, and a copy when it fits.
